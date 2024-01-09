@@ -13,14 +13,10 @@ app.use(cors());
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-app.use(express.static(__dirname + '/public/lights/'));
+app.use(express.static(__dirname + '/public/'));
 
-app.get('/api/ping', (req, res) => {
-  res.send();
-});
-
-app.get('/api/getPhysicalDevices', (req, res) => {
-  res.send(readFileSync('./devices.json', 'utf8'));
+app.get('/api/getDatabase', (req, res) => {
+  res.send(readFileSync('./database.json', 'utf8'));
 });
 
 app.on('clientError', (err, socket) => {
