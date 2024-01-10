@@ -9,8 +9,7 @@ import { Server } from 'socket.io';
 const app = express();
 const port = 3000;
 const server = createServer(app);
-const io = new Server(server);
-let ioSocket = null;
+const io = new Server(server, {transports: ['websocket']});
 
 const fighters = {};
 

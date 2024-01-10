@@ -7,7 +7,7 @@ const App = () => {
 
   const [fighters, setFighters] = useState({});
   const [socket, setSocket] = useState(() => {
-    const socket = io();
+    const socket = io('/', {transports: ['websocket']});
     socket.on('disconnect', () => console.log('disconnect'));
     //socket.on('connect_error', () => {
     //  setTimeout(() => socket.connect(), 5000);
