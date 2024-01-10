@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import {io} from 'socket.io-client';
 
-let socket;
-
 const App = () => {
 
   const [fighters, setFighters] = useState({});
