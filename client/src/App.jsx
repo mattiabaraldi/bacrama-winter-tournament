@@ -9,9 +9,9 @@ const App = () => {
   const [socket, setSocket] = useState(() => {
     const socket = io();
     socket.on('disconnect', () => console.log('disconnect'));
-    socket.on('connect_error', () => {
-      setTimeout(() => socket.connect(), 5000);
-    });
+    //socket.on('connect_error', () => {
+    //  setTimeout(() => socket.connect(), 5000);
+    //});
     socket.on('serveFighters', data => setFighters(data));
     socket.on('connect', () => socket.emit('getFighters'));
     return socket;
