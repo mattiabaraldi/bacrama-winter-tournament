@@ -11,10 +11,10 @@ const port = process.env.PORT || 3000;
 const server = createServer(app);
 const io = new Server(server, {transports: ['websocket']});
 
-const fighters = JSON.parse(readFileSync('./database.json'));
+const bacchiatori = JSON.parse(readFileSync('./database.json'));
 
 setInterval(() => {
-  writeFile('./database.json', JSON.stringify(fighters), err => {
+  writeFile('./database.json', JSON.stringify(bacchiatori), err => {
     if(err) {
       console.log('error');
     } else {
@@ -37,16 +37,18 @@ app.on('clientError', (err, socket) => {
 });
 
 io.on('connection', (socket) => {
+  console.log(socket.id)
   socket.on('getFighters', data => {
-    io.emit('serveFighters', fighters);
+    console.log('get')
+    io.emit('serveFighters', bacchiatori);
   });
   socket.on('addFighter', data => {
-    fighters[data.name] = data.level;
-    io.emit('serveFighters', fighters);
+    bacchiatori[data.name] = data.level;
+    io.emit('serveFighters', bacchiatori);
   });
   socket.on('deleteFighter', data => {
-    if(data in fighters) delete fighters[data];
-    io.emit('serveFighters', fighters);
+    if(data in bacchiatori) delete bacchiatori[data];
+    io.emit('serveFighters', bacchiatori);
   });
 });
 
