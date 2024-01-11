@@ -1,8 +1,9 @@
 {
   "type": "module",
   "scripts": {
-    "dev": "node server.js",
-    "build": "vite build --emptyOutDir"
+    "dev": "SET NODE_ENV=development && node server.js",
+    "build": "vite build --emptyOutDir",
+    "start": "vite --host"
   },
   "dependencies": {
     "cors": "^2.8.5",

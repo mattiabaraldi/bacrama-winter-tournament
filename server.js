@@ -34,6 +34,10 @@ io.on('connection', (socket) => {
     fighters[data.name] = data.level;
     io.emit('serveFighters', fighters);
   });
+  socket.on('deleteFighter', data => {
+    if(data in fighters) delete fighters[data];
+    io.emit('serveFighters', fighters);
+  });
 });
 
 server.listen(port, () => {

@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import {io} from 'socket.io-client';
+import './App.css';
 
 const App = () => {
 
   const [fighters, setFighters] = useState({});
   const [socket, setSocket] = useState(() => {
     const socket = io('/', {transports: ['websocket']});
+    //const socket = io('http://localhost:3000', {transports: ['websocket']});
     socket.on('disconnect', () => console.log('disconnect'));
     //socket.on('connect_error', () => {
     //  setTimeout(() => socket.connect(), 5000);
@@ -25,30 +27,35 @@ const App = () => {
 
   return (
     <>
-      <form onSubmit={addFighter}>
-        <div style={{
-          height: '200px',
-          width: 'auto',
-          display: 'flex',
-          flexDirection: 'column',
-        }}>
+      <div className='main-grid'>     
+        <div className='main-column' style={{display: 'flex', flexDirection: 'column'}}>
+          <form className='form' onSubmit={addFighter}>
+            <div className='form-item'>
+              <p>Nome:</p>
+              <input name="name" />
+            </div>
+            <div className='form-item'>
+              <p>Livello:</p>
+              <input type='number' name="level" />
+            </div>
+            <div className='form-item'>
+              <button className='submit-button' type="submit">Aggiungi</button>
+            </div>
+          </form>
           <div>
-            <p>Nome:</p>
-            <input name="name" />
-          </div>
-          <div>
-            <p>Livello:</p>
-            <input type='number' name="level" />
-          </div>
-          <div style={{paddingTop: '30px'}}>
-            <button type="submit">Aggiungi</button>
+          {Object.entries(fighters).map(([key, value]) => {
+              return (
+                <div className='fighter-row'>
+                  <p key={key}>{`${key}: ${value}`}</p>
+                  <button onClick={() => {
+                    socket?.emit('deleteFighter', key);
+                  }}>X</button>
+                </div>
+              );
+            })}
           </div>
         </div>
-        {Object.entries(fighters).map(([key, value]) => {
-          return <p>{`${key}: ${value}`}</p>;
-        })}
-      </form>
-      
+      </div>
     </>
   );
 }
