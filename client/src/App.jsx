@@ -32,11 +32,11 @@ const App = () => {
           <form className='form' onSubmit={addFighter}>
             <div className='form-item'>
               <p>Nome:</p>
-              <input name="name" />
+              <input required={true} name="name" />
             </div>
             <div className='form-item'>
               <p>Livello:</p>
-              <input type='number' name="level" />
+              <input type='number' required={true} max={10} min={0} name="level" />
             </div>
             <div className='form-item'>
               <button className='submit-button' type="submit">Aggiungi</button>
