@@ -1,6 +1,5 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/bacrzovb/server/
-    - cp server.js $DEPLOYPATH
-    - cp ./public $DEPLOYPATH
+    - cp ./server.js /home/bacrzovb/server/
+    - cp -r ./public /home/bacrzovb/server/public
