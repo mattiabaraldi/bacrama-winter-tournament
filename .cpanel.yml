@@ -2,6 +2,5 @@
 deployment:
   tasks:
     - export DEPLOYPATH=/home/bacrzovb/server/
-    - npm run build
     - /bin/cp server.js $DEPLOYPATH
     - /bin/cp public/ $DEPLOYPATH
