@@ -2,4 +2,4 @@
 deployment:
   tasks:
     - cp ./server.js /home/bacrzovb/server/
-    - cp -r ./public /home/bacrzovb/server/public
+    - cp -r ./public/* /home/bacrzovb/server/public
