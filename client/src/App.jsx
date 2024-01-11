@@ -48,7 +48,7 @@ const App = () => {
                 <div className='fighter-row'>
                   <p key={key}>{`${key}: ${value}`}</p>
                   <button onClick={() => {
-                    socket?.emit('deleteFighter', key);
+                    if(confirm('Vuoi cancellare questo bacchiatore?')) socket?.emit('deleteFighter', key);
                   }}>X</button>
                 </div>
               );
