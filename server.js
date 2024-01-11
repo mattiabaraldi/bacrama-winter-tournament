@@ -3,7 +3,7 @@ import cors from 'cors';
 import path from 'path';
 import { createServer } from 'node:http';
 import { fileURLToPath } from 'url';
-import { readFileSync } from 'fs';
+import { readFileSync, writeFile } from 'fs';
 import { Server } from 'socket.io';
 
 const app = express();
@@ -11,7 +11,17 @@ const port = process.env.PORT || 3000;
 const server = createServer(app);
 const io = new Server(server, {transports: ['websocket']});
 
-const fighters = {};
+const fighters = JSON.parse(readFileSync('./database.json'));
+
+setInterval(() => {
+  writeFile('./database.json', JSON.stringify(fighters), err => {
+    if(err) {
+      console.log('error');
+    } else {
+      console.log('saved');
+    }
+  });
+}, 10000);
 
 app.use(express.json());
 app.use(cors());
