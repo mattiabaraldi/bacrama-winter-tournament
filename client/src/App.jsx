@@ -34,13 +34,13 @@ const App = () => {
             <Link href='/'>Home</Link>
           </div>
           <div>
-            <Link href='/bacchiatori'>Bacchiatori</Link>
+            <Link href='/bacchiatori/'>Bacchiatori</Link>
           </div>
           <div>
-            <Link href='/gironi'>Gironi</Link>
+            <Link href='/gironi/'>Gironi</Link>
           </div>
           <div>
-            <Link href='/eliminazione'>Eliminazione</Link>
+            <Link href='/eliminazione/'>Eliminazione</Link>
           </div>
         </ul>
       </nav>
@@ -50,13 +50,13 @@ const App = () => {
           <Route path='/'>
             <Home />
           </Route>
-          <Route path='/bacchiatori'>
+          <Route path='/bacchiatori/'>
             <Bacchiatori socket={socket} bacchiatori={bacchiatori} />
           </Route>
-          <Route path='/gironi'>
+          <Route path='/gironi/'>
             <Gironi socket={socket} bacchiatori={bacchiatori} />
           </Route>
-          <Route path='/eliminazione'>
+          <Route path='/eliminazione/'>
             <Eliminazione socket={socket} bacchiatori={bacchiatori} />
           </Route>
         </div>

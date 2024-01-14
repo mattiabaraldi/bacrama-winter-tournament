@@ -20,10 +20,7 @@ const Route = ({ path, children }) => {
         };
     }, [])
 
-    let sanitizedPath = currentPath.slice(-1) === '/' ? currentPath.slice(0, -1) : currentPath;
-    sanitizedPath = sanitizedPath === '' ? '/' : sanitizedPath;
-
-    return sanitizedPath === path
+    return currentPath === path
     ? children
     : null;
 }
