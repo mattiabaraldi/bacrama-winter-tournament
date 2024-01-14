@@ -21,6 +21,7 @@ const Route = ({ path, children }) => {
     }, [])
 
     const sanitizedPath = path.slice(-1) === '/' ? path.slice(0, -1) : path;
+    console.log(sanitizedPath);
 
     return currentPath === sanitizedPath
     ? children
