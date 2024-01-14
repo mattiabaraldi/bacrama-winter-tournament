@@ -20,7 +20,9 @@ const Link = ({ className, href, children }) => {
 
   return (
     <a className={className} href={href} onClick={onClick}>
-      {children}
+      <div>
+        {children}
+      </div>
     </a>
   );
 };

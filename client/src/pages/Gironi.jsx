@@ -74,7 +74,7 @@ const Gironi = ({socket, bacchiatori}) => {
         gironi.map((girone, index) => {
         return (
         <div key={index}>
-          <button style={{width: '100%'}} onClick={() => {
+          <button className='button-girone' onClick={() => {
             const newGironiVisibility = [...gironiVisibility];
             newGironiVisibility[index] = !gironiVisibility[index];
             setGironiVisibility(newGironiVisibility);
@@ -99,17 +99,19 @@ const Gironi = ({socket, bacchiatori}) => {
                 }
               </tbody>
             </table>}
-            <table style={{width: '100%', marginTop: '20px', marginBottom: '20px'}}>
+            <table className='table-girone'>
               <tbody>
               {ordineDuelli[girone.length].map((ordine, index) => {
                 return (
                   <tr key={index}>
                     <td>{index + 1}</td>
                     <td>{girone[ordine[0] - 1]}</td>
-                    <td style={{width: '10%'}}></td>
+                    <td className='cell-score'></td>
                     <td>{girone[ordine[1] - 1]}</td>
-                    <td style={{width: '10%'}}></td>
-                    <td style={{width: '10%'}}>✔</td>
+                    <td className='cell-score'></td>
+                    { index == 3 &&
+                      <td className='cell-button'>✔</td>
+                    }
                   </tr>
                 )
               })}

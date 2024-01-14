@@ -3,6 +3,35 @@ table, th, td {
   border-collapse: collapse;
 }
 
+.table-girone {
+  border-color: var(--bg-color);
+  width: 100%;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.button-girone {
+  width: 100%;
+}
+
+.cell-score {
+  width: 1.2em;
+  height: 1.2em;
+}
+
+.cell-button {
+  width: 1.5em;
+  height: 1.2em;
+  user-select: none;
+  border-color: var(--bg-color);
+}
+
+.cell-button:hover {
+  cursor: pointer;
+  border: 1px solid black;
+  background-color: var(--hover-color);
+}
+
 td {
   text-align: center;
   font-size: small;

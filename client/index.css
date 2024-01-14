@@ -1,3 +1,8 @@
+:root {
+  --bg-color: rgb(250, 235, 215);
+  --hover-color: rgb(205, 92, 92);
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -6,7 +11,7 @@ body {
   overflow: auto;
   display: flex;
   place-items: center;
-  background-color: rgb(250, 235, 215);
+  background-color: var(--bg-color);
 }
 
 #root {

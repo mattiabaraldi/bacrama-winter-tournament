@@ -3,7 +3,6 @@ import { io } from 'socket.io-client';
 
 import Route from './components/Route';
 import Link from './components/Link';
-import Layout from './pages/Layout';
 import Home from './pages/Home';
 import Bacchiatori from './pages/Bacchiatori';
 import Gironi from './pages/Gironi';
@@ -30,18 +29,10 @@ const App = () => {
     <div className='outlet-container'>
       <nav>
         <ul className='navigator'>
-          <div>
-            <Link href='/'>Home</Link>
-          </div>
-          <div>
-            <Link href='/bacchiatori/'>Bacchiatori</Link>
-          </div>
-          <div>
-            <Link href='/gironi/'>Gironi</Link>
-          </div>
-          <div>
-            <Link href='/eliminazione/'>Eliminazione</Link>
-          </div>
+          <Link href='/'>Home</Link>
+          <Link href='/bacchiatori/'>Bacchiatori</Link>
+          <Link href='/gironi/'>Gironi</Link>
+          <Link href='/eliminazione/'>Eliminazione</Link>
         </ul>
       </nav>
 
