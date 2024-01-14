@@ -37,6 +37,9 @@ const Bacchiatori = ({socket, bacchiatori}) => {
           );
         })}
       </div>
+      <button onClick={() => {
+        socket?.emit('calcGironi');
+      }}>Calcola gironi</button>
     </>
   );
 }

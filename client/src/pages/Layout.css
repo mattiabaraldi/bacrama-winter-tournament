@@ -3,10 +3,11 @@
   font-size: 1.1rem;
   font-weight: 400;
   color: #3C3744;
+  margin: 0;
+  padding: 0;
 }
 
 .outlet-container {
-  background-color: rgb(250, 235, 215);
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -15,8 +16,7 @@
 
 .navigator {
   margin: 0;
-  padding-left: 10px;
-  padding-right: 10px;
+  padding: 0;
   display: flex;
   justify-content: space-around;
 }
@@ -41,6 +41,8 @@
 }
 
 .main-grid {
+  margin: 0;
+  padding: 0;
   height: 100%;
   width: 100%;
   display: grid;
@@ -57,4 +59,5 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  padding-bottom: 50px;
 }

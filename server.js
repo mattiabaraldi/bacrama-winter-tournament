@@ -12,14 +12,38 @@ const server = createServer(app);
 const io = new Server(server, {transports: ['websocket']});
 
 const bacchiatori = JSON.parse(readFileSync('./database.json'));
+const calculatedGironi = {};
+const datiGironi = {
+  8: [4, 4],
+  9: [5, 4],
+  10: [5, 5],
+  11: [6, 5],
+  12: [6, 6],
+  13: [5, 4, 4],
+  14: [5, 5, 4],
+  15: [5, 5, 5],
+  16: [6, 5, 5],
+  17: [6, 6, 5],
+  18: [6, 6, 6],
+  19: [5, 5, 5,	4],
+  20: [5, 5, 5,	5],
+  21: [6, 5, 5,	5],
+  22: [6, 6, 5,	5],
+  23: [6, 6, 6,	5],
+  24: [6, 6, 6,	6],
+  25: [5, 5, 5,	5, 5],
+  26: [6, 5, 5,	5, 5],
+  27: [6, 6, 5,	5, 5],
+  28: [6, 6, 6,	5, 5],
+  29: [6, 6, 6,	6, 5],
+  30: [6, 6, 6,	6, 6],
+  31: [6, 5, 5,	5, 5,	5],
+  32: [6, 6, 5,	5, 5,	5]
+}
 
 setInterval(() => {
   writeFile('./database.json', JSON.stringify(bacchiatori), err => {
-    if(err) {
-      console.log('error');
-    } else {
-      console.log('saved');
-    }
+    if(err) console.log('Save error');
   });
 }, 10000);
 
@@ -37,9 +61,7 @@ app.on('clientError', (err, socket) => {
 });
 
 io.on('connection', (socket) => {
-  console.log(socket.id)
-  socket.on('getFighters', data => {
-    console.log('get')
+  socket.on('getFighters', () => {
     io.emit('serveFighters', bacchiatori);
   });
   socket.on('addFighter', data => {
@@ -50,11 +72,39 @@ io.on('connection', (socket) => {
     if(data in bacchiatori) delete bacchiatori[data];
     io.emit('serveFighters', bacchiatori);
   });
+  socket.on('calcGironi', () => {
+    calcGironi(io);
+  });
+  socket.on('getGironi', () => {
+    io.emit('serveGironi', calculatedGironi);
+  });
 });
 
 server.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
+
+function calcGironi(io) {
+  const arrayBacchiatori = Object.entries(bacchiatori);
+  const numBacchiatori = arrayBacchiatori.length;
+
+  if(!(numBacchiatori in datiGironi)) return;
+  
+  const gironi = datiGironi[numBacchiatori];
+  for(const key in calculatedGironi) delete calculatedGironi[key];
+  for(let i = 0; i < gironi.length; i++) calculatedGironi[i] = [];
+
+  let i = 0;
+  const numGironi = gironi.length;
+  arrayBacchiatori.sort((a, b) => b[1] - a[1]);
+  console.log(arrayBacchiatori)
+  for(const bacchiatore of arrayBacchiatori) {
+    const name = bacchiatore[0];
+    if(i == gironi[i]) i = (i + 1) % numGironi;
+    calculatedGironi[i].push(name);
+    i = (i + 1) % numGironi;
+  }
+}
 
 
 
