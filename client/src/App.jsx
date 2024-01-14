@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { io } from 'socket.io-client';
-import { BrowserRouter, Routes, Route } from "react-router-dom";
 
+import Route from './components/Route';
 import Layout from './pages/Layout';
 import Home from './pages/Home';
 import Bacchiatori from './pages/Bacchiatori';
@@ -26,17 +26,41 @@ const App = () => {
   });
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
-          <Route path="bacchiatori" element={<Bacchiatori socket={socket} bacchiatori={bacchiatori} />} />
-          <Route path="gironi" element={<Gironi socket={socket} bacchiatori={bacchiatori} />} />
-          <Route path="eliminazione" element={<Eliminazione socket={socket} bacchiatori={bacchiatori} />} />
-          <Route path="*" element={<Eliminazione socket={socket} bacchiatori={bacchiatori} />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <div className='outlet-container'>
+      <nav>
+        <ul className='navigator'>
+          <div>
+            <a href='/'>Home</a>
+          </div>
+          <div>
+            <a href='/bacchiatori'>Bacchiatori</a>
+          </div>
+          <div>
+            <a href='/gironi'>Gironi</a>
+          </div>
+          <div>
+            <a href='/eliminazione'>Eliminazione</a>
+          </div>
+        </ul>
+      </nav>
+
+      <div className='main-grid'>     
+        <div className='main-column'>
+          <Route path='/'>
+            <Home />
+          </Route>
+          <Route path='/bacchiatori'>
+            <Bacchiatori socket={socket} bacchiatori={bacchiatori} />
+          </Route>
+          <Route path='/gironi'>
+            <Gironi socket={socket} bacchiatori={bacchiatori} />
+          </Route>
+          <Route path='/eliminazione'>
+            <Eliminazione socket={socket} bacchiatori={bacchiatori} />
+          </Route>
+        </div>
+      </div>
+    </div>
   );
 }
 
