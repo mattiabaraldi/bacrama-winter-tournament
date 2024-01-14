@@ -53,7 +53,7 @@ app.use(cors());
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-app.use('/*', express.static(__dirname + '/public/'));
+app.use('*', express.static(__dirname + '/public/'));
 
 app.on('clientError', (err, socket) => {
   if (err.code === 'ECONNRESET' || !socket.writable) socket.end('HTTP/2 400 Bad Request\n');
