@@ -30,16 +30,16 @@ const App = () => {
       <nav>
         <ul className='navigator'>
           <div>
-            <a href='/'>Home</a>
+            <Link href='/'>Home</Link>
           </div>
           <div>
-            <a href='/bacchiatori'>Bacchiatori</a>
+            <Link href='/bacchiatori'>Bacchiatori</Link>
           </div>
           <div>
-            <a href='/gironi'>Gironi</a>
+            <Link href='/gironi'>Gironi</Link>
           </div>
           <div>
-            <a href='/eliminazione'>Eliminazione</a>
+            <Link href='/eliminazione'>Eliminazione</Link>
           </div>
         </ul>
       </nav>
@@ -49,13 +49,13 @@ const App = () => {
           <Route path='/'>
             <Home />
           </Route>
-          <Route path='/bacchiatori'>
+          <Route path='/bacchiatori/'>
             <Bacchiatori socket={socket} bacchiatori={bacchiatori} />
           </Route>
-          <Route path='/gironi'>
+          <Route path='/gironi/'>
             <Gironi socket={socket} bacchiatori={bacchiatori} />
           </Route>
-          <Route path='/eliminazione'>
+          <Route path='/eliminazione/'>
             <Eliminazione socket={socket} bacchiatori={bacchiatori} />
           </Route>
         </div>
