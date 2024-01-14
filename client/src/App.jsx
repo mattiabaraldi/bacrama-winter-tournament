@@ -50,13 +50,13 @@ const App = () => {
           <Route path='/'>
             <Home />
           </Route>
-          <Route path='/bacchiatori'>
+          <Route path='/bacchiatori/'>
             <Bacchiatori socket={socket} bacchiatori={bacchiatori} />
           </Route>
-          <Route path='/gironi'>
+          <Route path='/gironi/'>
             <Gironi socket={socket} bacchiatori={bacchiatori} />
           </Route>
-          <Route path='/eliminazione'>
+          <Route path='/eliminazione/'>
             <Eliminazione socket={socket} bacchiatori={bacchiatori} />
           </Route>
         </div>
