@@ -76,7 +76,7 @@ io.on('connection', (socket) => {
     calcGironi(io);
   });
   socket.on('getGironi', () => {
-    io.emit('serveGironi', calculatedGironi);
+    socket.emit('serveGironi', calculatedGironi);
   });
 });
 
