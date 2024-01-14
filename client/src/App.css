@@ -47,7 +47,6 @@
 .main-grid {
   margin: 0;
   padding: 0;
-  height: 100%;
   width: 100%;
   display: grid;
   grid-template-columns: [left] auto [start] min(70%, 400px) [end] auto [right];
