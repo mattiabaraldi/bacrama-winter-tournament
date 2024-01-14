@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { io } from 'socket.io-client';
 
 import Route from './components/Route';
+import Link from './components/Link';
 import Layout from './pages/Layout';
 import Home from './pages/Home';
 import Bacchiatori from './pages/Bacchiatori';
