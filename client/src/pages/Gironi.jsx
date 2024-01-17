@@ -44,81 +44,101 @@ const ordineDuelli = {
 const Gironi = ({socket, bacchiatori}) => {
 
   const [gironi, setGironi] = useState([]);
+  const [numEditDuello, setNumEditDuello] = useState([]);
+  const [newPunteggi, setNewPunteggi] = useState({uguale: 0, opposto: 0});
   const [gironiVisibility, setGironiVisibility] = useState([]);
 
   useEffect(() => {
     socket.on('serveGironi', data => {
       const arrayGironi = Object.values(data);
       const newGironiVisibility = [];
+      const newNumEditDuello = [];
       for(let i = 0; i < arrayGironi.length; i++) {
-        newGironiVisibility.push(false);
+        newGironiVisibility.push(true);
+        newNumEditDuello.push(-1);
       }
       setGironiVisibility(newGironiVisibility);
+      setNumEditDuello(newNumEditDuello);
       setGironi([...arrayGironi]);
     });
-    socket.on('serveGironi', data => {
-
-    })
     socket.emit('getGironi');
   }, [socket]);
-
-  const calcGironi = () => {
-    const number = Object.entries(bacchiatori).length;
-    
-    return number;
-  }
 
   return (
     <>
       {
-        gironi.map((girone, index) => {
+        gironi.map((girone, iGirone) => {
         return (
-        <div key={index}>
+        <div key={iGirone}>
           <button className='button-girone' onClick={() => {
             const newGironiVisibility = [...gironiVisibility];
-            newGironiVisibility[index] = !gironiVisibility[index];
+            newGironiVisibility[iGirone] = !gironiVisibility[iGirone];
             setGironiVisibility(newGironiVisibility);
-          }}>{`Girone ${index + 1}`}</button>
-          {gironiVisibility[index] && <div>
-            {null && <table style={{marginTop: '10px', marginBottom: '10px'}} key={index}>
-              <thead>
-                <tr>
-                  <th></th>
-                  { girone.map((bacchiatore, index) => <td key={index}>{bacchiatore}</td>) }
-                </tr>
-              </thead>
-              <tbody>
-                {
-                  girone.map((bacchiatore, index) => {
+          }}>{`Girone ${iGirone + 1}`}</button>
+          { 
+            gironiVisibility[iGirone] &&
+            <div>
+              <table className='table-girone'>
+                <tbody>
+                  { girone.map((duello, iDuello) => {
                     return (
-                      <tr key={index}>
-                        <td>{bacchiatore}</td>
+                      <tr key={iDuello}
+                        className={numEditDuello[iGirone] == iDuello ? 'tr-girone-active' : 'tr-girone'}
+                        onClick={() => {
+                          if(numEditDuello[iGirone] != -1) return;
+                          const newNumEditDuello = [...numEditDuello];
+                          newNumEditDuello[iGirone] = numEditDuello[iGirone] == -1 ? iDuello : -1;
+                          setNumEditDuello(newNumEditDuello);
+                        }}
+                      >
+                        <td>{duello.numeroDuello}</td>
+                        <td>{duello.nomeUguale}</td>
+                        <td className='cell-score'>
+                          <input
+                            className={numEditDuello[iGirone] == iDuello ? 'input-score-active' : 'input-score'}
+                            defaultValue={duello.puntiUguale}
+                            disabled={numEditDuello[iGirone] != iDuello}
+                            onChange={e => setNewPunteggi({...newPunteggi, uguale: e.target.value})}
+                            type='number'
+                            min='0'
+                          />
+                        </td>
+                        <td>{duello.nomeOpposto}</td>
+                        <td className='cell-score'>
+                          <input
+                            className={numEditDuello[iGirone] == iDuello ? 'input-score-active' : 'input-score'}
+                            defaultValue={duello.puntiOpposto}
+                            disabled={numEditDuello[iGirone] != iDuello}
+                            onChange={e => setNewPunteggi({...newPunteggi, opposto: e.target.value})}
+                            type='number'
+                            min='0'
+                          />
+                        </td>
                       </tr>
                     )
-                  })
-                }
-              </tbody>
-            </table>}
-            <table className='table-girone'>
-              <tbody>
-              {ordineDuelli[girone.length].map((ordine, index) => {
-                return (
-                  <tr key={index}>
-                    <td>{index + 1}</td>
-                    <td>{girone[ordine[0] - 1]}</td>
-                    <td className='cell-score'></td>
-                    <td>{girone[ordine[1] - 1]}</td>
-                    <td className='cell-score'></td>
-                    { index == 3 &&
-                      <td className='cell-button'>✔</td>
-                    }
-                  </tr>
-                )
-              })}
-
-            </tbody>
-            </table>
-          </div>}
+                  })}
+                  { numEditDuello[iGirone] != -1 &&
+                    <tr className='tr-button'>
+                      <td></td>
+                      <td className='cell-button' onClick={() => {
+                        socket.emit('setPunteggi', {girone: iGirone, duello: numEditDuello[iGirone], uguale: newPunteggi.uguale, opposto: newPunteggi.opposto});
+                        const newNumEditDuello = [...numEditDuello];
+                        newNumEditDuello[iGirone] = -1;
+                        setNumEditDuello(newNumEditDuello);
+                      }}>✔</td>
+                      <td></td>
+                      <td className='cell-button' onClick={() => {
+                        const newNumEditDuello = [...numEditDuello];
+                        newNumEditDuello[iGirone] = -1;
+                        setNumEditDuello(newNumEditDuello);
+                      }}>✖</td>
+                      <td></td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
         </div>
         )
       })}
