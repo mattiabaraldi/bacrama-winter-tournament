@@ -121,7 +121,19 @@ const Gironi = ({socket, bacchiatori}) => {
                     <tr className='tr-button'>
                       <td></td>
                       <td className='cell-button' onClick={() => {
-                        socket.emit('setPunteggi', {girone: iGirone, duello: numEditDuello[iGirone], uguale: newPunteggi.uguale, opposto: newPunteggi.opposto});
+                        if(newPunteggi.uguale < 0 || newPunteggi.opposto < 0) {
+                          alert('I punteggi devono essere maggiori di zero');
+                          return;
+                        } else if((newPunteggi.uguale > 10 || newPunteggi.opposto > 10) && Math.abs(newPunteggi.uguale - newPunteggi.opposto) > 2) {
+                          alert('La differenza ai vantaggi non può essere maggiore di due');
+                          return;
+                        }
+                        socket.emit('setPunteggi', {
+                          girone: iGirone,
+                          duello: numEditDuello[iGirone],
+                          uguale: newPunteggi.uguale,
+                          opposto: newPunteggi.opposto
+                        });
                         const newNumEditDuello = [...numEditDuello];
                         newNumEditDuello[iGirone] = -1;
                         setNumEditDuello(newNumEditDuello);
