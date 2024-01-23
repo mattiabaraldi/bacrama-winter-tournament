@@ -46,11 +46,11 @@ const App = () => {
             <Bacchiatori socket={socket} bacchiatori={bacchiatori} />
           </Route>
           <Route path='/gironi/'>
-            <Gironi socket={socket} bacchiatori={bacchiatori} />
+            <Gironi admin={admin} socket={socket} bacchiatori={bacchiatori} />
           </Route>
         </div>
         <Route path='/eliminatorie/'>
-          <Eliminazione socket={socket} bacchiatori={bacchiatori} />
+          <Eliminazione admin={admin} socket={socket} bacchiatori={bacchiatori} />
         </Route>
       </div>
     </div>

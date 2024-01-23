@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import './Eliminazione.css';
 
 
-const Eliminazione = ({socket}) => {
+const Eliminazione = ({admin, socket}) => {
 
   const [table, setTable] = useState([[]]);
   const [page, setPage] = useState(0);
@@ -105,6 +105,7 @@ const Eliminazione = ({socket}) => {
                       <input className='input-eliminazione-score'
                         style={{backgroundColor: cell.color}}
                         placeholder={cell.score ?? 0}
+                        disabled={!admin}
                         type='number'
                         onFocus={e => e.target.select()}
                         onBlur={e => {

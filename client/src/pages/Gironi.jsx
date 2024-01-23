@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import './Gironi.css';
 
-const Gironi = ({socket}) => {
+const Gironi = ({admin, socket}) => {
 
   const [gironi, setGironi] = useState([]);
   const [numEditDuello, setNumEditDuello] = useState([]);
@@ -42,6 +42,7 @@ const Gironi = ({socket}) => {
                         className={numEditDuello[iGirone] == iDuello ? 'tr-girone-active' : 'tr-girone'}
                         onClick={() => {
                           if(numEditDuello[iGirone] != -1) return;
+                          if(!admin) return;
                           const newNumEditDuello = [...numEditDuello];
                           newNumEditDuello[iGirone] = numEditDuello[iGirone] == -1 ? iDuello : -1;
                           setNumEditDuello(newNumEditDuello);
