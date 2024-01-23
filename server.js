@@ -5,6 +5,7 @@ import { createServer } from 'node:http';
 import { fileURLToPath } from 'url';
 import { readFileSync, writeFile } from 'fs';
 import { Server } from 'socket.io';
+import { isNull } from 'util';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -145,7 +146,7 @@ io.on('connection', (socket) => {
     io.emit('serveFighters', bacchiatori);
   });
   socket.on('addFighter', data => {
-    bacchiatori[data.name] = {level: data.level, score: 0};
+    bacchiatori[data.name] = {level: data.level, scoreClassifica: 0};
     io.emit('serveFighters', bacchiatori);
   });
   socket.on('deleteFighter', data => {
@@ -164,6 +165,11 @@ io.on('connection', (socket) => {
   socket.on('getEliminatorie', () => {
     socket.emit('serveEliminatorie', calculatedEliminatorie);
   });
+  socket.on('editScore', data => {
+    calculatedEliminatorie[data.fase][data.bacchiatore].score = data.score*1;
+    updateEliminatorie();
+    socket.emit('serveEliminatorie', calculatedEliminatorie);
+  });
   socket.on('setPunteggi', data => {
     calculatedGironi[data.girone][data.duello] = {
       ...calculatedGironi[data.girone][data.duello],
@@ -178,6 +184,24 @@ io.on('connection', (socket) => {
 server.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
+
+function updateEliminatorie() {
+  for(let i = 0; i < calculatedEliminatorie.length - 1; i++) {
+    const currentGirone = calculatedEliminatorie[i];
+    const nextGirone = calculatedEliminatorie[i + 1];
+    for(let j = 0; j < currentGirone.length; j += 2) {
+      const b1 = currentGirone[j];
+      const b2 = currentGirone[j + 1];
+      if(!b1.name || !b2.name) continue;
+      nextGirone[Math.floor(j / 2)].name = '?';
+      if(isNaN(b1.score) || isNaN(b2.score) || b1.score == null || b2.score == null) continue;
+      if((b1.score < 10 && b2.score < 10) || b1.score == b2.score) continue;
+      const winner = b1.score > b2.score ? b1 : b2;
+      nextGirone[Math.floor(j / 2)].name = winner.name;
+    }
+  }
+  console.log(calculatedEliminatorie);
+}
 
 function calcEliminatorie() {
   const punteggi = {};
@@ -217,23 +241,28 @@ function calcEliminatorie() {
   }
   const arrayPunteggi = Object.entries(punteggi)
   .reduce((accum, record) => {
-    accum.push({name: record[0], score: record[1]});
+    accum.push({name: record[0], scoreClassifica: record[1]});
     return accum;
   }, []);
-  arrayPunteggi.sort((a, b) => b.score - a.score);
+  arrayPunteggi.sort((a, b) => b.scoreClassifica - a.scoreClassifica);
 
   calculatedEliminatorie.splice(0, calculatedEliminatorie.length);
   calculatedEliminatorie.push([], [], [], [], [], []);
 
-  for(let i = 0; i < 32; i++) calculatedEliminatorie[0].push({name: ''});
-  for(let i = 0; i < 16; i++) calculatedEliminatorie[1].push({name: ''});
-  for(let i = 0; i < 8; i++) calculatedEliminatorie[2].push({name: ''});
-  for(let i = 0; i < 4; i++) calculatedEliminatorie[3].push({name: ''});
-  for(let i = 0; i < 2; i++) calculatedEliminatorie[4].push({name: ''});
-  calculatedEliminatorie[5].push({name: ''});
+  const defaultValue = {
+    name: '',
+    score: null,
+  }
+
+  for(let i = 0; i < 32; i++) calculatedEliminatorie[0].push({...defaultValue});
+  for(let i = 0; i < 16; i++) calculatedEliminatorie[1].push({...defaultValue});
+  for(let i = 0; i < 8; i++) calculatedEliminatorie[2].push({...defaultValue});
+  for(let i = 0; i < 4; i++) calculatedEliminatorie[3].push({...defaultValue});
+  for(let i = 0; i < 2; i++) calculatedEliminatorie[4].push({...defaultValue});
+  calculatedEliminatorie[5].push({...defaultValue});
 
   arrayPunteggi.forEach((bacchiatore, index) => {
-    calculatedEliminatorie[0][ordineEliminatorie[index]] = bacchiatore;
+    calculatedEliminatorie[0][ordineEliminatorie[index]] = {...defaultValue, ...bacchiatore};
   })
 
   for(let i = 0; i < 5; i++) {
@@ -248,30 +277,7 @@ function calcEliminatorie() {
     }
   }
 
-  /*for(let i = 1; i < 6; i++) {
-    for(let j = 0; j < calculatedEliminatorie[i].length; j++) {
-      if(calculatedEliminatorie[i - 1][j * 2].name === '' && calculatedEliminatorie[i - 1][(j * 2) + 1].name === '') {
-        calculatedEliminatorie[i][j].name = '';
-      } else if(calculatedEliminatorie[i - 1][j * 2].name === '') {
-        calculatedEliminatorie[i][j].name = calculatedEliminatorie[i - 1][(j * 2) + 1].name;
-      } else if (calculatedEliminatorie[i - 1][(j * 2) + 1].name === '') {
-        calculatedEliminatorie[i][j].name = calculatedEliminatorie[i - 1][j * 2].name;
-      }
-    }
-  }*/
-  
-
-  console.log(calculatedEliminatorie);
   return;
-
-  for(let i = 0; i < 16; i++) {
-    ordineEliminatorie.findIndex()
-  }
-  for(let i = 0; i < 8; i++) calculatedEliminatorie[1].push({});
-  for(let i = 0; i < 4; i++) calculatedEliminatorie[2].push({});
-  for(let i = 0; i < 2; i++) calculatedEliminatorie[3].push({});
-
-  console.log(arrayPunteggi);
 }
 
 function calcGironi() {

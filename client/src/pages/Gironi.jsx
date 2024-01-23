@@ -6,18 +6,15 @@ const Gironi = ({socket}) => {
   const [gironi, setGironi] = useState([]);
   const [numEditDuello, setNumEditDuello] = useState([]);
   const [newPunteggi, setNewPunteggi] = useState({uguale: 0, opposto: 0});
-  const [gironiVisibility, setGironiVisibility] = useState([]);
+  const [gironiVisibility, setGironiVisibility] = useState({});
 
   useEffect(() => {
     socket.on('serveGironi', data => {
       const arrayGironi = Object.values(data);
-      const newGironiVisibility = [];
       const newNumEditDuello = [];
       for(let i = 0; i < arrayGironi.length; i++) {
-        newGironiVisibility.push(true);
         newNumEditDuello.push(-1);
       }
-      setGironiVisibility(newGironiVisibility);
       setNumEditDuello(newNumEditDuello);
       setGironi([...arrayGironi]);
     });
@@ -31,12 +28,11 @@ const Gironi = ({socket}) => {
         return (
         <div key={iGirone}>
           <button className='button-girone' onClick={() => {
-            const newGironiVisibility = [...gironiVisibility];
-            newGironiVisibility[iGirone] = !gironiVisibility[iGirone];
-            setGironiVisibility(newGironiVisibility);
+            const newGironeVisibility = !gironiVisibility[iGirone];
+            setGironiVisibility({...gironiVisibility, [iGirone]: newGironeVisibility});
           }}>{`Girone ${iGirone + 1}`}</button>
           { 
-            gironiVisibility[iGirone] &&
+            !gironiVisibility[iGirone] &&
             <div>
               <table className='table-girone'>
                 <tbody>

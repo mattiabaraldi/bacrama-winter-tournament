@@ -27,14 +27,31 @@
   border-color: var(black);
 }
 
+.cell-clickable:hover {
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.cell-visible-organization {
+  display: flex;
+  padding-left: 1em;
+  justify-content: space-between;
+}
+
+.input-eliminazione-score {
+  width: 3em;
+  text-align: center;
+  border: 0;
+  user-select: all;
+}
+
 .page-arrow {
   position: sticky;
   justify-self: center;
   z-index: 1;
-  top: 0vh;
   width: 100%;
   height: 100%;
-  opacity: 0.4;
+  opacity: 0.5;
   border: 0;
 }
 

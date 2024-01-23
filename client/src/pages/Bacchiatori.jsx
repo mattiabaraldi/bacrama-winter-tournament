@@ -26,7 +26,7 @@ const Bacchiatori = ({socket, bacchiatori}) => {
         </div>
       </form>
       <div>
-      {Object.entries(bacchiatori).length}
+      {'Numero bacchiatori: ' + Object.entries(bacchiatori).length}
       {Object.entries(bacchiatori).map(([key, value]) => {
           return (
             <div key={key} className='fighter-row'>

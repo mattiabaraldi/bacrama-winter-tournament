@@ -32,11 +32,6 @@ table, th, td {
   height: 1.2em;
 }
 
-.cell-score > input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
 .input-score {
   text-align: center;
   border: 0;

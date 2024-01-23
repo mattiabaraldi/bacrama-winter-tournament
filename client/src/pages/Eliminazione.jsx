@@ -59,18 +59,18 @@ const Eliminazione = ({socket}) => {
 
     const rows = [];
     for(let j = 0; j < 63; j++) {
-      const row = []
+      const row = [];
       for(let i = 0; i < 6; i++) {
         const cell = {};
         if(visibleMatrix[i][j]) {
-          if(eliminatorie.length != 0 && eliminatorie[i][bacNumber[i]].name !== '') {
+          if(eliminatorie.length != 0) {
             cell.text = eliminatorie[i][bacNumber[i]].name;
-          } else {
-            cell.text = '---';
+            cell.score = eliminatorie[i][bacNumber[i]].score;
           }
-          console.log(cell.text);
+          if(cell.text === '') cell.text = '---';
           cell.visible = true;
           cell.color = colorMatrix[i] % 2 == 0 ? '#FAFAFA' : '#FF9999';
+          cell.coords = {fase: i, bacchiatore: bacNumber[i]};
           colorMatrix[i]++;
           bacNumber[i] += 1;
         } else {
@@ -93,9 +93,26 @@ const Eliminazione = ({socket}) => {
           <tbody>{
             table.map((row, index) => {return (
               <tr key={index} className='row-eliminazione'>{
-                row.map((cell, index) => { return (
-                  <td className={cell.visible ? 'cell-visible' : 'cell-filler'} style={{backgroundColor: cell.color}} key={index}>
-                    {cell.text}
+                row.map((cell, index) => {return (
+                  <td
+                    className={cell.visible ? 'cell-visible' : 'cell-filler'}
+                    style={{backgroundColor: cell.color}}
+                    key={index}
+                  >
+                    <div className='cell-visible-organization'>
+                      {cell.text}
+                      {cell.visible && cell.coords.fase != 5 && cell.text && cell.text != '---' && cell.text != '?' &&
+                      <input className='input-eliminazione-score'
+                        style={{backgroundColor: cell.color}}
+                        placeholder={cell.score ?? 0}
+                        type='number'
+                        onFocus={e => e.target.select()}
+                        onBlur={e => {
+                          updateTree(socket, eliminatorie, cell.coords, e.target.value);
+                          e.target.value = null;
+                        }}
+                      ></input>}
+                    </div>
                   </td>
                 )})
               }</tr>
@@ -109,3 +126,23 @@ const Eliminazione = ({socket}) => {
 }
 
 export default Eliminazione;
+
+const updateTree = (socket, tree, coords, score) => {
+  const {fase, bacchiatore} = coords;
+
+  if(isNaN(score) || !score || score == null) return null;
+
+  if(score < 0) {
+    alert('I punteggi devono essere maggiori di zero');
+    return null;
+  }
+  const sfidante = tree[fase][bacchiatore + (bacchiatore % 2 == 0 ? 1 : -1)];
+
+  if((score > 10 || sfidante.score > 10) && Math.abs(score - sfidante.score) > 2) {
+    alert('La differenza ai vantaggi non può essere maggiore di due');
+    return null;
+  }
+
+  socket.emit('editScore', {fase, bacchiatore, score});
+
+}

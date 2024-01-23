@@ -24,13 +24,14 @@ const App = () => {
     socket.on('connect', () => socket.emit('getFighters'));
     return socket;
   });
+  const [admin, setAdmin] = useState(() => localStorage.getItem('admin') === 'true')
 
   return (
     <div className='outlet-container'>
       <nav>
         <ul className='navigator'>
-          <Link href='/'>Home</Link>
-          <Link href='/bacchiatori/'>Bacchiatori</Link>
+          <Link href='/'>Admin</Link>
+          {admin && <Link href='/bacchiatori/'>Bacchiatori</Link>}
           <Link href='/gironi/'>Gironi</Link>
           <Link href='/eliminatorie/'>Eliminatorie</Link>
         </ul>
@@ -39,7 +40,7 @@ const App = () => {
       <div className='main-grid'>     
         <div className='main-column'>
           <Route path='/'>
-            <Home />
+            <Home setAdmin={setAdmin}/>
           </Route>
           <Route path='/bacchiatori/'>
             <Bacchiatori socket={socket} bacchiatori={bacchiatori} />
