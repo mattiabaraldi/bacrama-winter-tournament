@@ -26,10 +26,11 @@ const Bacchiatori = ({socket, bacchiatori}) => {
         </div>
       </form>
       <div>
+      {Object.entries(bacchiatori).length}
       {Object.entries(bacchiatori).map(([key, value]) => {
           return (
             <div key={key} className='fighter-row'>
-              <p>{`${key}: ${value}`}</p>
+              <p>{`${key}: ${value.level}`}</p>
               <button onClick={() => {
                 if(confirm('Vuoi cancellare questo bacchiatore?')) socket?.emit('deleteFighter', key);
               }}>X</button>
@@ -40,6 +41,9 @@ const Bacchiatori = ({socket, bacchiatori}) => {
       <button onClick={() => {
         socket?.emit('calcGironi');
       }}>Calcola gironi</button>
+      <button onClick={() => {
+        socket?.emit('calcEliminatorie');
+      }}>Calcola eliminatorie</button>
     </>
   );
 }

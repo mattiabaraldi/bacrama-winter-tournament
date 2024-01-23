@@ -1,0 +1,28 @@
+.container-eliminazione {
+  width: 100%;
+  display: grid;
+  grid-column: 1fr 4fr 1fr;
+}
+
+.table-eliminazione {
+  border-color: var(--bg-color);
+  width: 600%;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  transition: transform 0.2s;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.row-eliminazione {
+  border: 0px;
+}
+
+.cell-filler {
+  border-color: var(--filler-color);
+  border: 0px;
+}
+
+.cell-visible {
+  border-color: var(black);
+}

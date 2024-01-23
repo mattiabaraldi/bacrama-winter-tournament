@@ -1,47 +1,7 @@
 import { useState, useEffect } from 'react';
 import './Gironi.css';
 
-const ordineDuelli = {
-  4: [
-    [1, 4],
-    [2, 3],
-    [1, 3],
-    [2, 4],
-    [1, 2],
-    [3, 4]
-  ],
-  5: [
-    [1, 2],
-    [3, 4],
-    [5, 1],
-    [2, 3],
-    [5, 4],
-    [1, 3],
-    [2, 5],
-    [4, 1],
-    [3, 5],
-    [4, 2]
-  ],
-  6: [
-    [1, 2],
-    [4, 5],
-    [2, 3],
-    [5, 6],
-    [3, 1],
-    [6, 4],
-    [2, 5],
-    [1, 4],
-    [5, 3],
-    [1, 6],
-    [4, 2],
-    [3, 6],
-    [5, 1],
-    [3, 4],
-    [6, 2]
-  ]
-}
-
-const Gironi = ({socket, bacchiatori}) => {
+const Gironi = ({socket}) => {
 
   const [gironi, setGironi] = useState([]);
   const [numEditDuello, setNumEditDuello] = useState([]);
@@ -97,6 +57,7 @@ const Gironi = ({socket, bacchiatori}) => {
                           <input
                             className={numEditDuello[iGirone] == iDuello ? 'input-score-active' : 'input-score'}
                             defaultValue={duello.puntiUguale}
+                            placeholder={duello.puntiUguale}
                             disabled={numEditDuello[iGirone] != iDuello}
                             onChange={e => setNewPunteggi({...newPunteggi, uguale: e.target.value})}
                             type='number'
@@ -121,7 +82,16 @@ const Gironi = ({socket, bacchiatori}) => {
                     <tr className='tr-button'>
                       <td></td>
                       <td className='cell-button' onClick={() => {
-                        if(newPunteggi.uguale < 0 || newPunteggi.opposto < 0) {
+                        const newNumEditDuello = [...numEditDuello];
+                        newNumEditDuello[iGirone] = -1;
+                        setNumEditDuello(newNumEditDuello);
+                      }}>✖</td>
+                      <td></td>
+                      <td className='cell-button' onClick={() => {
+                        if(newPunteggi.uguale === '' || newPunteggi.opposto === '') {
+                          alert('Entrambi i punteggi devono avere un valore');
+                          return;
+                        } else if(newPunteggi.uguale < 0 || newPunteggi.opposto < 0) {
                           alert('I punteggi devono essere maggiori di zero');
                           return;
                         } else if((newPunteggi.uguale > 10 || newPunteggi.opposto > 10) && Math.abs(newPunteggi.uguale - newPunteggi.opposto) > 2) {
@@ -138,12 +108,6 @@ const Gironi = ({socket, bacchiatori}) => {
                         newNumEditDuello[iGirone] = -1;
                         setNumEditDuello(newNumEditDuello);
                       }}>✔</td>
-                      <td></td>
-                      <td className='cell-button' onClick={() => {
-                        const newNumEditDuello = [...numEditDuello];
-                        newNumEditDuello[iGirone] = -1;
-                        setNumEditDuello(newNumEditDuello);
-                      }}>✖</td>
                       <td></td>
                     </tr>
                   }

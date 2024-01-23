@@ -51,6 +51,7 @@
   display: grid;
   grid-template-columns: [left] auto [start] min(70%, 400px) [end] auto [right];
   grid-template-rows: [top] 2em [start] auto [end] 2em [bottom];
+  overflow-x: hidden;
 }
 
 .main-grid > * {

@@ -14,8 +14,8 @@ const App = () => {
 
   const [bacchiatori, setBacchiatori] = useState({});
   const [socket, setSocket] = useState(() => {
-    const socket = io('/', {transports: ['websocket']});
-    //const socket = io('http://localhost:3000', {transports: ['websocket']});
+    //const socket = io('/', {transports: ['websocket']});
+    const socket = io('http://localhost:3000', {transports: ['websocket']});
     socket.on('disconnect', () => console.log('disconnect'));
     socket.on('connect_error', () => {
       setTimeout(() => socket.connect(), 5000);
@@ -32,7 +32,7 @@ const App = () => {
           <Link href='/'>Home</Link>
           <Link href='/bacchiatori/'>Bacchiatori</Link>
           <Link href='/gironi/'>Gironi</Link>
-          <Link href='/eliminazione/'>Eliminazione</Link>
+          <Link href='/eliminatorie/'>Eliminatorie</Link>
         </ul>
       </nav>
 
@@ -47,10 +47,10 @@ const App = () => {
           <Route path='/gironi/'>
             <Gironi socket={socket} bacchiatori={bacchiatori} />
           </Route>
-          <Route path='/eliminazione/'>
-            <Eliminazione socket={socket} bacchiatori={bacchiatori} />
-          </Route>
         </div>
+        <Route path='/eliminatorie/'>
+          <Eliminazione socket={socket} bacchiatori={bacchiatori} />
+        </Route>
       </div>
     </div>
   );

@@ -37,17 +37,16 @@ table, th, td {
   margin: 0;
 }
 
-/* Firefox */
-.cell-score > input[type=number] {
-  -moz-appearance: textfield;
-}
-
 .input-score {
   text-align: center;
   border: 0;
   margin: 0px;
   width: 1.2em;
   background-color: var(--bg-color);
+}
+
+.input-score::placeholder {
+  color: black;
 }
 
 .input-score-active {

@@ -11,8 +11,9 @@ const port = process.env.PORT || 3000;
 const server = createServer(app);
 const io = new Server(server, {transports: ['websocket']});
 
-const bacchiatori = JSON.parse(readFileSync('./database.json'));
+const bacchiatori = JSON.parse(readFileSync('./bacchiatori.json'));
 const calculatedGironi = JSON.parse(readFileSync('./gironi.json'));
+const calculatedEliminatorie = JSON.parse(readFileSync('./eliminatorie.json'));
 const datiGironi = {
   8: [4, 4],
   9: [5, 4],
@@ -40,6 +41,7 @@ const datiGironi = {
   31: [6, 5, 5,	5, 5,	5],
   32: [6, 6, 5,	5, 5,	5]
 }
+
 const ordineDuelli = {
   4: [
     [1, 4],
@@ -80,11 +82,47 @@ const ordineDuelli = {
   ]
 }
 
+const numeroDuelliPerPersona = {15: 6, 10: 5, 6: 4};
+
+const ordineEliminatorie = [
+  1, 31, 4, 27,  8, 23, 12, 19, 17, 14, 21, 10, 25,  6, 29,  2, 
+  3, 28, 7,  5, 11, 20, 15, 16, 18, 13, 22,  9, 26, 24, 30,  0
+];
+
+const ordineEliminatorieOld = [
+  31, 0, 15, 16, 2, 19, 13, 18, 4, 27, 11, 20, 6, 25, 9, 22,
+  23, 8, 24, 7, 21, 10, 26, 5, 29, 12, 28, 3, 17, 14, 30, 1
+];
+const ordineEliminatorieOldOld = [
+  [
+    31, 0, 15, 16, 2, 19, 13, 18, 4, 27, 11, 20, 6, 25, 9, 22,
+    23, 8, 24, 7, 21, 10, 26, 5, 29, 12, 28, 3, 17, 14, 30, 1
+  ], [
+    null, null, null, null, null, null, null, null,
+    null, null, null, null, null, null, null, null
+  ], [
+    null, null, null, null,
+    null, null, null, null
+  ], [
+    null, null,
+    null, null
+  ], [
+    null,
+    null
+  ], [
+    null
+  ]
+]
+
 setInterval(() => {
   writeFile('./bacchiatori.json', JSON.stringify(bacchiatori), err => {
+    console.log('salvati!');
     if(err) console.log('Save error');
   });
   writeFile('./gironi.json', JSON.stringify(calculatedGironi), err => {
+    if(err) console.log('Save error');
+  });
+  writeFile('./eliminatorie.json', JSON.stringify(calculatedEliminatorie), err => {
     if(err) console.log('Save error');
   });
 }, 10000);
@@ -107,7 +145,7 @@ io.on('connection', (socket) => {
     io.emit('serveFighters', bacchiatori);
   });
   socket.on('addFighter', data => {
-    bacchiatori[data.name] = data.level;
+    bacchiatori[data.name] = {level: data.level, score: 0};
     io.emit('serveFighters', bacchiatori);
   });
   socket.on('deleteFighter', data => {
@@ -119,6 +157,12 @@ io.on('connection', (socket) => {
   });
   socket.on('getGironi', () => {
     socket.emit('serveGironi', calculatedGironi);
+  });
+  socket.on('calcEliminatorie', () => {
+    calcEliminatorie();
+  });
+  socket.on('getEliminatorie', () => {
+    socket.emit('serveEliminatorie', calculatedEliminatorie);
   });
   socket.on('setPunteggi', data => {
     calculatedGironi[data.girone][data.duello] = {
@@ -134,6 +178,91 @@ io.on('connection', (socket) => {
 server.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
+
+function calcEliminatorie() {
+  const punteggi = {};
+  for(const gironeObj of Object.entries(calculatedGironi)) {
+    const girone = gironeObj[1];
+    for(const duello of girone) {
+      let vinceUguale = false;
+      duello.puntiUguale *= 1;
+      duello.puntiOpposto *= 1;
+      if(duello.puntiUguale > duello.puntiOpposto) {
+        vinceUguale = true;
+      } else if(duello.puntiUguale < duello.puntiOpposto) {
+        vinceUguale = false;
+      } else {
+        vinceUguale = Math.random() > 0.5;
+      }
+      let winnerName;
+      let winnerScore;
+      let loserName;
+      let loserScore;
+      if(vinceUguale) {
+        winnerName = duello.nomeUguale;
+        winnerScore = duello.puntiUguale;
+        loserName = duello.nomeOpposto;
+        loserScore = duello.puntiOpposto;
+      } else {
+        winnerName = duello.nomeOpposto;
+        winnerScore = duello.puntiOpposto;
+        loserName = duello.nomeUguale;
+        loserScore = duello.puntiUguale;
+      }
+      if(!(winnerName in punteggi)) punteggi[winnerName] = 0;
+      if(!(loserName in punteggi)) punteggi[loserName] = 0;
+      punteggi[winnerName] += (winnerScore - loserScore) / numeroDuelliPerPersona[girone.length];
+      punteggi[loserName] += 0;
+    }
+  }
+  const arrayPunteggi = Object.entries(punteggi)
+  .reduce((accum, record) => {
+    accum.push({name: record[0], score: record[1]});
+    return accum;
+  }, []);
+  arrayPunteggi.sort((a, b) => b.score - a.score);
+
+  calculatedEliminatorie.splice(0, calculatedEliminatorie.length);
+  calculatedEliminatorie.push([], [], [], [], [], []);
+
+  for(let i = 0; i < 32; i++) calculatedEliminatorie[0].push({name: '', exists: false});
+  for(let i = 0; i < 16; i++) calculatedEliminatorie[1].push({name: ''});
+  for(let i = 0; i < 8; i++) calculatedEliminatorie[2].push({name: ''});
+  for(let i = 0; i < 4; i++) calculatedEliminatorie[3].push({name: ''});
+  for(let i = 0; i < 2; i++) calculatedEliminatorie[4].push({name: ''});
+  calculatedEliminatorie[5].push({name: ''});
+
+  arrayPunteggi.forEach((bacchiatore, index) => {
+    calculatedEliminatorie[0][ordineEliminatorie[index]] = bacchiatore;
+  })
+
+  
+
+  for(let i = 1; i < 6; i++) {
+    for(let j = 0; j < calculatedEliminatorie[i].length; j++) {
+      if(calculatedEliminatorie[i - 1][j * 2].name === '' && calculatedEliminatorie[i - 1][(j * 2) + 1].name === '') {
+        calculatedEliminatorie[i][j].name = '';
+      } else if(calculatedEliminatorie[i - 1][j * 2].name === '') {
+        calculatedEliminatorie[i][j].name = calculatedEliminatorie[i - 1][(j * 2) + 1].name;
+      } else if (calculatedEliminatorie[i - 1][(j * 2) + 1].name === '') {
+        calculatedEliminatorie[i][j].name = calculatedEliminatorie[i - 1][j * 2].name;
+      }
+    }
+  }
+  
+
+  console.log(calculatedEliminatorie);
+  return;
+
+  for(let i = 0; i < 16; i++) {
+    ordineEliminatorie.findIndex()
+  }
+  for(let i = 0; i < 8; i++) calculatedEliminatorie[1].push({});
+  for(let i = 0; i < 4; i++) calculatedEliminatorie[2].push({});
+  for(let i = 0; i < 2; i++) calculatedEliminatorie[3].push({});
+
+  console.log(arrayPunteggi);
+}
 
 function calcGironi() {
   const arrayBacchiatori = Object.entries(bacchiatori);
@@ -151,7 +280,7 @@ function calcGironi() {
 
   let i = 0;
   const numGironi = gironi.length;
-  arrayBacchiatori.sort((a, b) => b[1] - a[1]);
+  arrayBacchiatori.sort((a, b) => b[1].level - a[1].level);
   
   for(const bacchiatore of arrayBacchiatori) {
     const name = bacchiatore[0];
