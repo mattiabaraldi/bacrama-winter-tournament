@@ -86,25 +86,25 @@ const Eliminazione = ({socket}) => {
   }
 
   return (
-    <div className='container-eliminazione'>
-      <div>
-        <button onClick={() => setPage(Math.max(0, page - 1))}>{'<='}</button>
-        <button onClick={() => setPage(Math.min(5, page + 1))}>{'=>'}</button>
+    <>
+      <button className='page-arrow arrow-prev-eliminazione' onClick={() => setPage(Math.max(0, page - 1))}></button>
+      <div className='container-eliminazione'>
+        <table className='table-eliminazione' style={{transform: `translateX(${-page*100/6}%)`}}>
+          <tbody>{
+            table.map((row, index) => {return (
+              <tr key={index} className='row-eliminazione'>{
+                row.map((cell, index) => { return (
+                  <td className={cell.visible ? 'cell-visible' : 'cell-filler'} style={{backgroundColor: cell.color}} key={index}>
+                    {cell.text}
+                  </td>
+                )})
+              }</tr>
+            )})
+          }</tbody>
+        </table>
       </div>
-      <table className='table-eliminazione' style={{transform: `translateX(${-page*100/6}%)`}}>
-        <tbody>{
-          table.map((row, index) => {return (
-            <tr key={index} className='row-eliminazione'>{
-              row.map((cell, index) => { return (
-                <td className={cell.visible ? 'cell-visible' : 'cell-filler'} style={{backgroundColor: cell.color}} key={index}>
-                  {cell.text}
-                </td>
-              )})
-            }</tr>
-          )})
-        }</tbody>
-      </table>
-    </div>
+    <button className='page-arrow arrow-next-eliminazione' onClick={() => setPage(Math.min(5, page + 1))}></button>
+    </>
   )
 }
 

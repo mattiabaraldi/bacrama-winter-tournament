@@ -225,7 +225,7 @@ function calcEliminatorie() {
   calculatedEliminatorie.splice(0, calculatedEliminatorie.length);
   calculatedEliminatorie.push([], [], [], [], [], []);
 
-  for(let i = 0; i < 32; i++) calculatedEliminatorie[0].push({name: '', exists: false});
+  for(let i = 0; i < 32; i++) calculatedEliminatorie[0].push({name: ''});
   for(let i = 0; i < 16; i++) calculatedEliminatorie[1].push({name: ''});
   for(let i = 0; i < 8; i++) calculatedEliminatorie[2].push({name: ''});
   for(let i = 0; i < 4; i++) calculatedEliminatorie[3].push({name: ''});
@@ -236,9 +236,19 @@ function calcEliminatorie() {
     calculatedEliminatorie[0][ordineEliminatorie[index]] = bacchiatore;
   })
 
-  
+  for(let i = 0; i < 5; i++) {
+    for(let j = 0; j < calculatedEliminatorie[i].length - 1; j += 2) {
+      if(calculatedEliminatorie[i][j].name !== '' && calculatedEliminatorie[i][j + 1].name !== '') {
+        calculatedEliminatorie[i + 1][j / 2].name = '?';
+      } else if(calculatedEliminatorie[i][j].name !== '') {
+        calculatedEliminatorie[i + 1][j / 2].name = calculatedEliminatorie[i][j].name;
+      } else if(calculatedEliminatorie[i][j + 1].name !== '') {
+        calculatedEliminatorie[i + 1][j / 2].name = calculatedEliminatorie[i][j + 1].name;
+      }
+    }
+  }
 
-  for(let i = 1; i < 6; i++) {
+  /*for(let i = 1; i < 6; i++) {
     for(let j = 0; j < calculatedEliminatorie[i].length; j++) {
       if(calculatedEliminatorie[i - 1][j * 2].name === '' && calculatedEliminatorie[i - 1][(j * 2) + 1].name === '') {
         calculatedEliminatorie[i][j].name = '';
@@ -248,7 +258,7 @@ function calcEliminatorie() {
         calculatedEliminatorie[i][j].name = calculatedEliminatorie[i - 1][j * 2].name;
       }
     }
-  }
+  }*/
   
 
   console.log(calculatedEliminatorie);
