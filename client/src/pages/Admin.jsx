@@ -3,6 +3,7 @@ import './Admin.css';
 
 const Admin = ({socket, bacchiatori, admin, setAdmin}) => {
 
+  const pwdRef = useRef();
   const selectRef = useRef();
 
   const addFighter = e => {
@@ -15,15 +16,16 @@ const Admin = ({socket, bacchiatori, admin, setAdmin}) => {
 
   return (
     <>
-      
       <div className='password-container'>
         <h1>Password admin:</h1>
-        <input onBlur={e => {
-          if(e.target.value == 'slartibartfast') localStorage.setItem('admin', true);
+        <input ref={pwdRef}></input>
+        <button onClick={() => {
+          if(!pwdRef?.current?.value) return;
+          if(pwdRef.current.value == 'slartibartfast') localStorage.setItem('admin', true);
           else localStorage.setItem('admin', false);
           setAdmin(localStorage.getItem('admin') === 'true');
-        }}></input>
-        <button>Enter!</button>
+          pwdRef.current.value = null;
+        }}>Enter!</button>
       </div>
       { admin && 
         <>
