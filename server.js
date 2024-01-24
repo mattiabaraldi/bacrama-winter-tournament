@@ -241,7 +241,11 @@ function calcEliminatorie(data) {
       }
       if(!(winnerName in punteggi)) punteggi[winnerName] = 0;
       if(!(loserName in punteggi)) punteggi[loserName] = 0;
-      punteggi[winnerName] += (winnerScore - loserScore) / numeroDuelliPerPersona[girone.length];
+      if(winnerScore > 8 && loserScore > 8) {
+        punteggi[winnerName] += 1 / numeroDuelliPerPersona[girone.length];
+      } else {
+        punteggi[winnerName] += (winnerScore - loserScore) / numeroDuelliPerPersona[girone.length];
+      }
       punteggi[loserName] += 0;
     }
   }
