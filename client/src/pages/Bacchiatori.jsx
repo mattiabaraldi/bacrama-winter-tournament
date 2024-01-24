@@ -4,7 +4,6 @@ import './Bacchiatori.css';
 const Bacchiatori = ({socket, bacchiatori}) => {
 
   const [gironi, setGironi] = useState();
-  console.log(gironi)
   
   useEffect(() => {
     socket.on('serveGironi', data => {

@@ -206,7 +206,6 @@ function updateEliminatorie() {
       nextGirone[Math.floor(j / 2)].name = winner.name;
     }
   }
-  console.log(calculatedEliminatorie);
 }
 
 function calcEliminatorie(data) {
