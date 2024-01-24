@@ -24,8 +24,6 @@ const Gironi = ({admin, socket}) => {
     setGironiVisibility(i);
   }
 
-  console.log(gironi);
-
   return (
     <>
       <div className='selector-bacchiatore'>

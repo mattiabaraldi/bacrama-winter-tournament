@@ -16,17 +16,6 @@ const Admin = ({socket, bacchiatori, admin, setAdmin}) => {
 
   return (
     <>
-      <div className='password-container'>
-        <h1>Password admin:</h1>
-        <input ref={pwdRef}></input>
-        <button onClick={() => {
-          if(!pwdRef?.current?.value) return;
-          if(pwdRef.current.value == 'slartibartfast') localStorage.setItem('admin', true);
-          else localStorage.setItem('admin', false);
-          setAdmin(localStorage.getItem('admin') === 'true');
-          pwdRef.current.value = null;
-        }}>Enter!</button>
-      </div>
       { admin && 
         <>
           <hr></hr>
@@ -80,6 +69,17 @@ const Admin = ({socket, bacchiatori, admin, setAdmin}) => {
           </div>
         </>
       }
+      <div className='password-container'>
+        <h1>Password admin:</h1>
+        <input ref={pwdRef}></input>
+        <button onClick={() => {
+          if(!pwdRef?.current?.value) return;
+          if(pwdRef.current.value == 'slartibartfast') localStorage.setItem('admin', true);
+          else localStorage.setItem('admin', false);
+          setAdmin(localStorage.getItem('admin') === 'true');
+          pwdRef.current.value = null;
+        }}>Enter!</button>
+      </div>
     </>
   )
 }
