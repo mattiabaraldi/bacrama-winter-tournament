@@ -39,9 +39,15 @@ const Bacchiatori = ({socket, bacchiatori}) => {
         })}
       </div>
       <button onClick={() => {
+        if(!confirm('Questa operazione sovrascrive tutti i gironi.\nContinuare?')) return;
+        if(!confirm('Verranno eliminati tutti i punteggi già inseriti nei gironi.\nContinuare?')) return;
+        if(!confirm('ULTIMO AVVERTIMENTO\nE se poi te ne penti?\nSicuro?')) return;
         socket?.emit('calcGironi');
       }}>Calcola gironi</button>
       <button onClick={() => {
+        if(!confirm('Questa operazione sovrascrive l\'albero delle eliminatorie.\nContinuare?')) return;
+        if(!confirm('Verranno eliminati tutti i punteggi già inseriti nelle eliminatorie.\nContinuare?')) return;
+        if(!confirm('ULTIMO AVVERTIMENTO\nNon c\'è modo di recuperare i vecchi punteggi.\nSicuro?')) return;
         socket?.emit('calcEliminatorie');
       }}>Calcola eliminatorie</button>
     </>

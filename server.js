@@ -261,8 +261,10 @@ function calcEliminatorie() {
   for(let i = 0; i < 2; i++) calculatedEliminatorie[4].push({...defaultValue});
   calculatedEliminatorie[5].push({...defaultValue});
 
+  const dimensioneGirone = 16;
+
   arrayPunteggi.forEach((bacchiatore, index) => {
-    calculatedEliminatorie[0][ordineEliminatorie[index]] = {...defaultValue, ...bacchiatore};
+    if(index < dimensioneGirone) calculatedEliminatorie[0][ordineEliminatorie[index]] = {...defaultValue, ...bacchiatore};
   })
 
   for(let i = 0; i < 5; i++) {
