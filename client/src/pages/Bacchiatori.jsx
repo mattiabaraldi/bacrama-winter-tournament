@@ -1,55 +1,27 @@
+import { useState, useEffect } from 'react';
 import './Bacchiatori.css';
 
 const Bacchiatori = ({socket, bacchiatori}) => {
+
+  const [gironi, setGironi] = useState();
+  console.log(gironi)
   
-  const addFighter = e => {
-    e.preventDefault();
-    socket?.emit('addFighter', {
-      name: e.target.elements.name.value,
-      level: e.target.elements.level.value
+  useEffect(() => {
+    socket.on('serveGironi', data => {
+      setGironi([...Object.values(data)]);
     });
-  }
+    socket.emit('getGironi');
+  }, [socket]);
 
   return (
     <>
-      <form className='form' onSubmit={addFighter}>
-        <div className='form-item'>
-          <p>Nome:</p>
-          <input required={true} name="name" />
-        </div>
-        <div className='form-item'>
-          <p>Livello:</p>
-          <input type='number' required={true} min={0} max={10} name="level" />
-        </div>
-        <div className='form-item'>
-          <button className='submit-button' type="submit">Aggiungi</button>
-        </div>
-      </form>
-      <div>
-      {'Numero bacchiatori: ' + Object.entries(bacchiatori).length}
-      {Object.entries(bacchiatori).map(([key, value]) => {
-          return (
-            <div key={key} className='fighter-row'>
-              <p>{`${key}: ${value.level}`}</p>
-              <button onClick={() => {
-                if(confirm('Vuoi cancellare questo bacchiatore?')) socket?.emit('deleteFighter', key);
-              }}>X</button>
-            </div>
-          );
-        })}
+      <div className='bacchiatori-container'>
+        {Object.entries(bacchiatori).toSorted().map(([key, value]) => { return (
+          <div className='bacchiatore-riga'>
+            <p key={key}>{`⚞ · ${key} · ⚟`}</p>
+          </div>
+        )})}
       </div>
-      <button onClick={() => {
-        if(!confirm('Questa operazione sovrascrive tutti i gironi.\nContinuare?')) return;
-        if(!confirm('Verranno eliminati tutti i punteggi già inseriti nei gironi.\nContinuare?')) return;
-        if(!confirm('ULTIMO AVVERTIMENTO\nE se poi te ne penti?\nSicuro?')) return;
-        socket?.emit('calcGironi');
-      }}>Calcola gironi</button>
-      <button onClick={() => {
-        if(!confirm('Questa operazione sovrascrive l\'albero delle eliminatorie.\nContinuare?')) return;
-        if(!confirm('Verranno eliminati tutti i punteggi già inseriti nelle eliminatorie.\nContinuare?')) return;
-        if(!confirm('ULTIMO AVVERTIMENTO\nNon c\'è modo di recuperare i vecchi punteggi.\nSicuro?')) return;
-        socket?.emit('calcEliminatorie');
-      }}>Calcola eliminatorie</button>
     </>
   );
 }

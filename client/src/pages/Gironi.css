@@ -6,30 +6,58 @@ table, th, td {
 .table-girone {
   border-color: var(--bg-color);
   width: 100%;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  margin: 0;
 }
 
 .table-girone * {
   user-select: none;
-  cursor: pointer;
 }
 
 .button-girone {
   width: 100%;
+  height: 2em;
 }
 
-.tr-girone:hover {
+.button-girone-active {
+  width: 100%;
   background-color: var(--hover-color);
 }
 
-.tr-girone-active {
+.tr-girone {
+  background-color: var(--bg-color);
+}
+
+.tr-girone:hover > .cell-score {
+  background-color: var(--hover-color)
+}
+
+.tr-girone:hover > .td-indice-duello, .tr-girone-active:hover > .td-indice-duello {
   background-color: var(--hover-color);
+}
+
+.cell-name-active {
+  font-weight: bold;
+}
+
+.selector-girone {
+  width: 100%;
+  display: flex;
+  border: 1px solid black;
+}
+
+.selector-girone > button {
+  border: 0;
+}
+
+.selector-bacchiatore {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
 }
 
 .cell-score {
-  width: 1.2em;
-  height: 1.2em;
+  width: 2em;
+  height: 2em;
 }
 
 .input-score {
@@ -37,19 +65,11 @@ table, th, td {
   border: 0;
   margin: 0px;
   width: 1.2em;
-  background-color: var(--bg-color);
+  background: transparent;
 }
 
 .input-score::placeholder {
   color: black;
-}
-
-.input-score-active {
-  text-align: center;
-  border: 0;
-  margin: 0px;
-  width: 1.2em;
-  background-color: white;
 }
 
 .tr-button > td {
@@ -60,6 +80,14 @@ table, th, td {
   user-select: none;
   font-size: 1em;
   height: 1.5em;
+}
+
+.cell-name.cell-winner {
+  background-color: lightgreen;
+}
+
+.cell-name.cell-loser {
+  background-color: lightgray;
 }
 
 .cell-button:hover {

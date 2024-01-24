@@ -4,119 +4,142 @@ import './Gironi.css';
 const Gironi = ({admin, socket}) => {
 
   const [gironi, setGironi] = useState([]);
-  const [numEditDuello, setNumEditDuello] = useState([]);
-  const [newPunteggi, setNewPunteggi] = useState({uguale: 0, opposto: 0});
-  const [gironiVisibility, setGironiVisibility] = useState({});
+  const [gironiVisibility, setGironiVisibility] = useState(() => {
+    const saved = localStorage.getItem('gironiVisibility');
+    if(saved) return saved * 1;
+    else return 0;
+  });
+  const [target, setTarget] = useState('')
 
   useEffect(() => {
     socket.on('serveGironi', data => {
       const arrayGironi = Object.values(data);
-      const newNumEditDuello = [];
-      for(let i = 0; i < arrayGironi.length; i++) {
-        newNumEditDuello.push(-1);
-      }
-      setNumEditDuello(newNumEditDuello);
       setGironi([...arrayGironi]);
     });
     socket.emit('getGironi');
   }, [socket]);
 
+  const handleGironiVisibility = i => {
+    localStorage.setItem('gironiVisibility', i);
+    setGironiVisibility(i);
+  }
+
+  console.log(gironi);
+
   return (
     <>
-      {
-        gironi.map((girone, iGirone) => {
-        return (
-        <div key={iGirone}>
-          <button className='button-girone' onClick={() => {
-            const newGironeVisibility = !gironiVisibility[iGirone];
-            setGironiVisibility({...gironiVisibility, [iGirone]: newGironeVisibility});
-          }}>{`Girone ${iGirone + 1}`}</button>
-          { 
-            !gironiVisibility[iGirone] &&
-            <div>
-              <table className='table-girone'>
-                <tbody>
-                  { girone.map((duello, iDuello) => {
-                    return (
-                      <tr key={iDuello}
-                        className={numEditDuello[iGirone] == iDuello ? 'tr-girone-active' : 'tr-girone'}
-                        onClick={() => {
-                          if(numEditDuello[iGirone] != -1) return;
-                          if(!admin) return;
-                          const newNumEditDuello = [...numEditDuello];
-                          newNumEditDuello[iGirone] = numEditDuello[iGirone] == -1 ? iDuello : -1;
-                          setNumEditDuello(newNumEditDuello);
-                        }}
-                      >
-                        <td>{duello.numeroDuello}</td>
-                        <td>{duello.nomeUguale}</td>
-                        <td className='cell-score'>
-                          <input
-                            className={numEditDuello[iGirone] == iDuello ? 'input-score-active' : 'input-score'}
-                            defaultValue={duello.puntiUguale}
-                            placeholder={duello.puntiUguale}
-                            disabled={numEditDuello[iGirone] != iDuello}
-                            onChange={e => setNewPunteggi({...newPunteggi, uguale: e.target.value})}
-                            type='number'
-                            min='0'
-                          />
-                        </td>
-                        <td>{duello.nomeOpposto}</td>
-                        <td className='cell-score'>
-                          <input
-                            className={numEditDuello[iGirone] == iDuello ? 'input-score-active' : 'input-score'}
-                            defaultValue={duello.puntiOpposto}
-                            disabled={numEditDuello[iGirone] != iDuello}
-                            onChange={e => setNewPunteggi({...newPunteggi, opposto: e.target.value})}
-                            type='number'
-                            min='0'
-                          />
-                        </td>
-                      </tr>
-                    )
-                  })}
-                  { numEditDuello[iGirone] != -1 &&
-                    <tr className='tr-button'>
-                      <td></td>
-                      <td className='cell-button' onClick={() => {
-                        const newNumEditDuello = [...numEditDuello];
-                        newNumEditDuello[iGirone] = -1;
-                        setNumEditDuello(newNumEditDuello);
-                      }}>✖</td>
-                      <td></td>
-                      <td className='cell-button' onClick={() => {
-                        if(newPunteggi.uguale === '' || newPunteggi.opposto === '') {
-                          alert('Entrambi i punteggi devono avere un valore');
-                          return;
-                        } else if(newPunteggi.uguale < 0 || newPunteggi.opposto < 0) {
-                          alert('I punteggi devono essere maggiori di zero');
-                          return;
-                        } else if((newPunteggi.uguale > 10 || newPunteggi.opposto > 10) && Math.abs(newPunteggi.uguale - newPunteggi.opposto) > 2) {
-                          alert('La differenza ai vantaggi non può essere maggiore di due');
-                          return;
-                        }
-                        socket.emit('setPunteggi', {
-                          girone: iGirone,
-                          duello: numEditDuello[iGirone],
-                          uguale: newPunteggi.uguale,
-                          opposto: newPunteggi.opposto
-                        });
-                        const newNumEditDuello = [...numEditDuello];
-                        newNumEditDuello[iGirone] = -1;
-                        setNumEditDuello(newNumEditDuello);
-                      }}>✔</td>
-                      <td></td>
-                    </tr>
-                  }
-                </tbody>
-              </table>
-            </div>
+      <div className='selector-bacchiatore'>
+        <p>Cerca Bacchiatore:</p>
+        <input onChange={e => {
+          const name = e.target.value;
+          if(name == '') {
+            setTarget('')
+            return;
           }
-        </div>
-        )
-      })}
+          let found = false;
+          for(const key in gironi) {
+            for(const duello of gironi[key]) {
+              if(duello.nomeUguale.toLowerCase().search(name.toLowerCase()) != -1) {
+                handleGironiVisibility(key);
+                setTarget(duello.nomeUguale)
+                break;
+              }
+              if(duello.nomeOpposto.toLowerCase().search(name.toLowerCase()) != -1) {
+                handleGironiVisibility(key);
+                setTarget(duello.nomeOpposto)
+                break;
+              }
+            }
+            if(found) break;
+          }
+        }} />
+      </div>
+      <div className='selector-girone'>{
+        gironi.map((girone, iGirone) => {
+          return <button key={iGirone}
+            className={gironiVisibility == iGirone ? 'button-girone-active' : 'button-girone'}
+            onClick={() => handleGironiVisibility(iGirone)}
+          >
+            {`Girone ${iGirone + 1}`}
+          </button>
+        })
+      }</div>
+      <div>{ gironi.map((girone, iGirone) => { return (
+        <div key={iGirone}>{
+          gironiVisibility == iGirone &&
+          <table className='table-girone'>
+            <tbody>{
+              girone.map((duello, iDuello) => { return (
+              <tr key={iDuello} className='tr-girone'>
+                <td className='td-indice-duello cell-score'>{duello.numeroDuello}</td>
+                <td className={
+                  'cell-name'
+                  + (duello.winner == 'uguale' ? ' cell-winner' : duello.winner == 'opposto' ? ' cell-loser' : '')
+                  + (target == duello.nomeUguale ? ' cell-name-active' : '')}>
+                  {duello.nomeUguale}
+                </td>
+                <td className='cell-score'>
+                  <input
+                    className={'input-score'}
+                    placeholder={duello.puntiUguale}
+                    disabled={!admin}
+                    onBlur={e => {
+                      updateGirone(socket, iGirone, iDuello, e.target.value, duello.puntiOpposto, true)
+                      e.target.value = null;
+                    }}
+                    type='number'
+                    min='0'
+                  />
+                </td>
+                <td className={
+                  'cell-name'
+                  + (duello.winner == 'uguale' ? ' cell-loser' : duello.winner == 'opposto' ? ' cell-winner' : '')
+                  + (target == duello.nomeOpposto ? ' cell-name-active' : '')}>
+                  {duello.nomeOpposto}
+                </td>
+                <td className='cell-score'>
+                  <input
+                    className={'input-score'}
+                    placeholder={duello.puntiOpposto}
+                    disabled={!admin}
+                    onBlur={e => {
+                      updateGirone(socket, iGirone, iDuello, e.target.value, duello.puntiUguale, false)
+                      e.target.value = null;
+                    }}
+                    type='number'
+                    min='0'
+                  />
+                </td>
+              </tr>
+              )})}</tbody>
+          </table>
+        }</div>
+      )})}</div>
     </>
   )
+}
+
+const updateGirone = (socket, iGirone, iDuello, puntiBacchiatore, puntiSfidante, isUguale) => {
+
+  if(isNaN(puntiBacchiatore) || !puntiBacchiatore || puntiBacchiatore == null) return null;
+
+  if(puntiBacchiatore < 0) {
+    alert('I punteggi devono essere maggiori di zero');
+    return null;
+  }
+
+  if((puntiBacchiatore > 10 || puntiSfidante > 10) && Math.abs(puntiBacchiatore - puntiSfidante) > 2) {
+    alert('La differenza ai vantaggi non può essere maggiore di due');
+    return null;
+  }
+
+  socket.emit('setPunteggi', {
+    girone: iGirone,
+    duello: iDuello,
+    uguale: isUguale ? puntiBacchiatore : puntiSfidante,
+    opposto: isUguale ? puntiSfidante : puntiBacchiatore
+  });
+
 }
 
 export default Gironi;

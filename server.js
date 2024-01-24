@@ -159,8 +159,8 @@ io.on('connection', (socket) => {
   socket.on('getGironi', () => {
     socket.emit('serveGironi', calculatedGironi);
   });
-  socket.on('calcEliminatorie', () => {
-    calcEliminatorie();
+  socket.on('calcEliminatorie', data => {
+    calcEliminatorie(data);
   });
   socket.on('getEliminatorie', () => {
     socket.emit('serveEliminatorie', calculatedEliminatorie);
@@ -168,16 +168,22 @@ io.on('connection', (socket) => {
   socket.on('editScore', data => {
     calculatedEliminatorie[data.fase][data.bacchiatore].score = data.score*1;
     updateEliminatorie();
-    socket.emit('serveEliminatorie', calculatedEliminatorie);
+    io.emit('serveEliminatorie', calculatedEliminatorie);
   });
   socket.on('setPunteggi', data => {
-    calculatedGironi[data.girone][data.duello] = {
-      ...calculatedGironi[data.girone][data.duello],
-      puntiUguale: data.uguale,
-      puntiOpposto: data.opposto
-    };
-    console.log(calculatedGironi)
-    socket.emit('serveGironi', calculatedGironi);
+    calculatedGironi[data.girone][data.duello].puntiUguale = data.uguale;
+    calculatedGironi[data.girone][data.duello].puntiOpposto = data.opposto;
+
+    calculatedGironi[data.girone][data.duello].winner = '';
+
+    if(!isNaN(data.uguale) && !isNaN(data.opposto) && data.uguale != null && data.opposto != null) {
+      if((data.uguale >= 10 || data.opposto >= 10) && data.uguale != data.opposto) {
+        const winner = data.uguale*1 > data.opposto*1 ? 'uguale' : 'opposto';
+        calculatedGironi[data.girone][data.duello].winner = winner;
+      }
+    }
+    
+    io.emit('serveGironi', calculatedGironi);
   })
 });
 
@@ -203,7 +209,7 @@ function updateEliminatorie() {
   console.log(calculatedEliminatorie);
 }
 
-function calcEliminatorie() {
+function calcEliminatorie(data) {
   const punteggi = {};
   for(const gironeObj of Object.entries(calculatedGironi)) {
     const girone = gironeObj[1];
@@ -261,7 +267,7 @@ function calcEliminatorie() {
   for(let i = 0; i < 2; i++) calculatedEliminatorie[4].push({...defaultValue});
   calculatedEliminatorie[5].push({...defaultValue});
 
-  const dimensioneGirone = 16;
+  const dimensioneGirone = data ? data * 1 : 32;
 
   arrayPunteggi.forEach((bacchiatore, index) => {
     if(index < dimensioneGirone) calculatedEliminatorie[0][ordineEliminatorie[index]] = {...defaultValue, ...bacchiatore};
@@ -321,6 +327,3 @@ function calcGironi() {
     });
   });
 }
-
-
-

@@ -5,8 +5,12 @@ import './Eliminazione.css';
 const Eliminazione = ({admin, socket}) => {
 
   const [table, setTable] = useState([[]]);
-  const [page, setPage] = useState(0);
-  const [editBacchiatore, setEditBacchiatore] = useState();
+  const [minPage, setMinPage] = useState(0);
+  const [page, setPage] = useState(() => {
+    const saved = localStorage.getItem('pageEliminatorie');
+    if(saved) return saved * 1;
+    else return 0;
+  });
   const [eliminatorie, setEliminatorie] = useState([]);
 
   useEffect(() => {
@@ -20,7 +24,24 @@ const Eliminazione = ({admin, socket}) => {
     fillTable();
   }, [eliminatorie]);
 
+  const handlePage = i => {
+    localStorage.setItem('pageEliminatorie', i);
+    setPage(i);
+  }
+
   function fillTable() {
+
+    let totalBacchiatori = 0;
+    if(eliminatorie.length > 0) {
+      for(const el of eliminatorie[0]) {
+        if(el.name != '') totalBacchiatori++;
+      }
+    }
+    if(totalBacchiatori == 0) return;
+
+    const colNumber = Math.ceil(Math.log2(totalBacchiatori)) + 1;
+    const tempMinPage = 6 - colNumber;
+
     const fillMatrix = [];
     const visibleMatrix = [];
     const bacNumber = [];
@@ -55,7 +76,7 @@ const Eliminazione = ({admin, socket}) => {
           firstPosition = -1;
         }
       }
-    }
+    }   
 
     const rows = [];
     for(let j = 0; j < 63; j++) {
@@ -63,10 +84,8 @@ const Eliminazione = ({admin, socket}) => {
       for(let i = 0; i < 6; i++) {
         const cell = {};
         if(visibleMatrix[i][j]) {
-          if(eliminatorie.length != 0) {
-            cell.text = eliminatorie[i][bacNumber[i]].name;
-            cell.score = eliminatorie[i][bacNumber[i]].score;
-          }
+          cell.text = eliminatorie[i][bacNumber[i]].name;
+          cell.score = eliminatorie[i][bacNumber[i]].score;
           if(cell.text === '') cell.text = '---';
           cell.visible = true;
           cell.color = colorMatrix[i] % 2 == 0 ? '#FAFAFA' : '#FF9999';
@@ -82,12 +101,15 @@ const Eliminazione = ({admin, socket}) => {
       }
       rows.push(row);
     }
+    
+    setMinPage(tempMinPage);
+    if(page < tempMinPage) setPage(tempMinPage);
     setTable(rows);
   }
 
   return (
     <>
-      <button className='page-arrow arrow-prev-eliminazione' onClick={() => setPage(Math.max(0, page - 1))}></button>
+      <button className='page-arrow arrow-prev-eliminazione' onClick={() => handlePage(Math.max(minPage, page - 1))}></button>
       <div className='container-eliminazione'>
         <table className='table-eliminazione' style={{transform: `translateX(${-page*100/6}%)`}}>
           <tbody>{
@@ -121,7 +143,7 @@ const Eliminazione = ({admin, socket}) => {
           }</tbody>
         </table>
       </div>
-    <button className='page-arrow arrow-next-eliminazione' onClick={() => setPage(Math.min(5, page + 1))}></button>
+    <button className='page-arrow arrow-next-eliminazione' onClick={() => handlePage(Math.min(5, page + 1))}></button>
     </>
   )
 }

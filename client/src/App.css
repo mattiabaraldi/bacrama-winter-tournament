@@ -69,3 +69,19 @@ input::-webkit-inner-spin-button {
   flex-direction: column;
   gap: 10px;
 }
+
+button {
+  padding-left: 5px;
+  padding-right: 5px;
+  background-color: antiquewhite;
+}
+
+button:hover {
+  background-color: indianred;
+  cursor: pointer;
+}
+
+p {
+  margin: 0;
+  padding: 0;
+}

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-const Route = ({ path, children }) => {
+const Route = ({ path, defaultPath, children }) => {
     // state to track URL and force component to re-render on change
     const [currentPath, setCurrentPath] = useState(window.location.pathname);
 
@@ -20,7 +20,7 @@ const Route = ({ path, children }) => {
         };
     }, [])
 
-    return currentPath === path
+    return currentPath === path || currentPath === defaultPath
     ? children
     : null;
 }
