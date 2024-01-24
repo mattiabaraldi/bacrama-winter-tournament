@@ -18,7 +18,6 @@ const Admin = ({socket, bacchiatori, admin, setAdmin}) => {
     <>
       { admin && 
         <>
-          <hr></hr>
           <div className='options-container'>
             <h1>Aggiunta Bacchiatori:</h1>
             <form className='form' onSubmit={addFighter}>
@@ -70,6 +69,7 @@ const Admin = ({socket, bacchiatori, admin, setAdmin}) => {
         </>
       }
       <div className='password-container'>
+        <hr></hr>
         <h1>Password admin:</h1>
         <input ref={pwdRef}></input>
         <button onClick={() => {
