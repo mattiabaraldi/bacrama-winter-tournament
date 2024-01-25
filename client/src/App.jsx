@@ -30,7 +30,7 @@ const App = () => {
     <div className='outlet-container'>
       <nav>
         <ul className='navigator'>
-          <img src='./bacrama.svg'></img>
+          <img src='/bacrama.svg'></img>
           {admin && <Link href='/admin/'>Admin</Link>}
           <Link href='/bacchiatori/'>Bacchiatori</Link>
           <Link href='/gironi/'>Gironi</Link>
