@@ -14,8 +14,8 @@ const App = () => {
 
   const [bacchiatori, setBacchiatori] = useState({});
   const [socket, setSocket] = useState(() => {
-    //const socket = io('/', {transports: ['websocket']});
-    const socket = io('http://localhost:3000', {transports: ['websocket']});
+    const socket = io('/', {transports: ['websocket']});
+    //const socket = io('http://localhost:3000', {transports: ['websocket']});
     socket.on('disconnect', () => console.log('disconnect'));
     socket.on('connect_error', () => {
       setTimeout(() => socket.connect(), 5000);
