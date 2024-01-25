@@ -35,6 +35,7 @@ const App = () => {
           <Link href='/bacchiatori/'>Bacchiatori</Link>
           <Link href='/gironi/'>Gironi</Link>
           <Link href='/eliminatorie/'>Eliminatorie</Link>
+          <img src='/bacrama.svg'></img>
         </ul>
       </nav>
 

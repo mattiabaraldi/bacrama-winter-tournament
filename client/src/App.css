@@ -30,12 +30,11 @@ input::-webkit-inner-spin-button {
   width: 2em;
 }
 
-.navigator img {
-  margin: auto 0;
+.navigator > img {
+  margin: auto 0.5em;
   height: 2em;
   width: 2em;
   object-fit: fill;
-  flex: 0.5;
 }
 
 .navigator > a {
