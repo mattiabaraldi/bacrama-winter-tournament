@@ -45,6 +45,10 @@
   user-select: all;
 }
 
+.input-eliminazione-score::placeholder {
+  color: black;
+}
+
 .page-arrow {
   position: sticky;
   justify-self: center;

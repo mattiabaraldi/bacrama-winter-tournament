@@ -16,8 +16,8 @@ const Bacchiatori = ({socket, bacchiatori}) => {
     <>
       <div className='bacchiatori-container'>
         {Object.entries(bacchiatori).toSorted().map(([key, value]) => { return (
-          <div className='bacchiatore-riga'>
-            <p key={key}>{`⚞ · ${key} · ⚟`}</p>
+          <div key={key} className='bacchiatore-riga'>
+            <p>{`· ${key} ·`}</p>
           </div>
         )})}
       </div>

@@ -58,7 +58,7 @@ const Gironi = ({admin, socket}) => {
             className={gironiVisibility == iGirone ? 'button-girone-active' : 'button-girone'}
             onClick={() => handleGironiVisibility(iGirone)}
           >
-            {`Girone ${iGirone + 1}`}
+            {`G${iGirone + 1}`}
           </button>
         })
       }</div>

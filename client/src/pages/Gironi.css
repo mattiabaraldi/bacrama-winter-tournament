@@ -14,12 +14,13 @@ table, th, td {
 }
 
 .button-girone {
-  width: 100%;
+  flex: 1;
   height: 2em;
 }
 
 .button-girone-active {
-  width: 100%;
+  flex: 1;
+  height: 2em;
   background-color: var(--hover-color);
 }
 
@@ -42,6 +43,7 @@ table, th, td {
 .selector-girone {
   width: 100%;
   display: flex;
+  flex-wrap: wrap;
   border: 1px solid black;
 }
 
@@ -52,7 +54,13 @@ table, th, td {
 .selector-bacchiatore {
   width: 100%;
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
+}
+
+.selector-bacchiatore > * {
+  flex: 1;
+  white-space: nowrap;
 }
 
 .cell-score {
