@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import './Admin.css';
 
 const Admin = ({socket, bacchiatori, admin, setAdmin}) => {
@@ -13,6 +13,10 @@ const Admin = ({socket, bacchiatori, admin, setAdmin}) => {
       level: e.target.elements.level.value
     });
   }
+
+  useEffect(() => {
+    socket.on('savedAll', () => alert('Torneo salvato!'));
+  }, [socket]);
 
   return (
     <>
@@ -83,6 +87,10 @@ const Admin = ({socket, bacchiatori, admin, setAdmin}) => {
               if(!confirm('Questa operazione sovrascrive l\'attuale classifica.\nContinuare?')) return;
               socket?.emit('calcClassifica', 'reset');
             }}>Reset Classifica</button>
+            <hr />
+            <button className='calc-button' onClick={() => {
+              socket?.emit('saveAll');
+            }}>Salva Torneo</button>
             <hr />
           </div>
         </>

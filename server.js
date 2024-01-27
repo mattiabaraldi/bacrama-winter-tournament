@@ -177,7 +177,23 @@ io.on('connection', (socket) => {
     io.emit('serveClassifica', classifica.data);
   });
   socket.on('getClassifica', () => {
-    socket.emit('serveClassifica', classifica.data)
+    socket.emit('serveClassifica', classifica.data);
+  });
+  socket.on('saveAll', () => {
+    const epoch = Date.now();
+    writeFile(`./backup/bacchiatori_${epoch}.json`, JSON.stringify(bacchiatori), err => {
+      if(err) console.log('Save error');
+    });
+    writeFile(`./backup/gironi_${epoch}.json`, JSON.stringify(calculatedGironi), err => {
+      if(err) console.log('Save error');
+    });
+    writeFile(`./backup/eliminatorie_${epoch}.json`, JSON.stringify(calculatedEliminatorie), err => {
+      if(err) console.log('Save error');
+    });
+    writeFile(`./backup/classifica_${epoch}.json`, JSON.stringify(classifica), err => {
+      if(err) console.log('Save error');
+    });
+    socket.emit('savedAll');
   });
 
 });
