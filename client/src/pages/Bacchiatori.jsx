@@ -3,23 +3,35 @@ import './Bacchiatori.css';
 
 const Bacchiatori = ({socket, bacchiatori}) => {
 
-  const [gironi, setGironi] = useState();
-  
+  const [classifica, setClassifica] = useState([]);
+
   useEffect(() => {
-    socket.on('serveGironi', data => {
-      setGironi([...Object.values(data)]);
+    socket.on('serveClassifica', data => {
+      setClassifica([...data]);
     });
-    socket.emit('getGironi');
+    socket.emit('getClassifica');
   }, [socket]);
+
+  const podio = ['🥇', '🥈', '🥉'];
 
   return (
     <>
       <div className='bacchiatori-container'>
-        {Object.entries(bacchiatori).toSorted().map(([key, value]) => { return (
-          <div key={key} className='bacchiatore-riga'>
-            <p>{`· ${key} ·`}</p>
-          </div>
-        )})}
+        { classifica.length == 0 ?
+          Object.entries(bacchiatori).toSorted().map(([key, value]) => { return (
+            <div key={key} className='bacchiatore-riga'>
+              <p>{`· ${key} ·`}</p>
+            </div>
+          )})
+        :
+          classifica.map((value, index) => { return (
+            <div key={index} className='classifica-riga'>
+              <p>{index in podio ? `${podio[index]}` : `· ${index + 1}`}</p>
+              <p>{`${value.name}`}</p>
+              <p>{index in podio ? `${podio[index]}` : `${index + 1} ·`}</p>
+            </div>
+          )})
+        }
       </div>
     </>
   );

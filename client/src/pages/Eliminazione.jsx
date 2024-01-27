@@ -84,18 +84,26 @@ const Eliminazione = ({admin, socket}) => {
       for(let i = 0; i < 6; i++) {
         const cell = {};
         if(visibleMatrix[i][j]) {
-          cell.text = eliminatorie[i][bacNumber[i]].name;
-          cell.score = eliminatorie[i][bacNumber[i]].score;
-          if(cell.text === '') cell.text = '---';
+          const bacchiatore = eliminatorie[i][bacNumber[i]];
+          const sfidNumber = i != 5 ? bacNumber[i] % 2 == 0 ? bacNumber[i] + 1 : bacNumber[i] - 1 : bacNumber[i];
+          const sfidante = eliminatorie[i][sfidNumber];
+          const isNamed = bacchiatore.name && bacchiatore.name != '?';
+          const sfidanteIsNamed = sfidante.name && sfidante.name != '?';      
+
           cell.visible = true;
+          cell.text = bacchiatore.name ? bacchiatore.name : '---';
+          cell.score = bacchiatore.score;
           cell.color = colorMatrix[i] % 2 == 0 ? '#FAFAFA' : '#FF9999';
           cell.coords = {fase: i, bacchiatore: bacNumber[i]};
+          cell.inputVisible = i != 5 && isNamed && sfidanteIsNamed;
+          
           colorMatrix[i]++;
           bacNumber[i] += 1;
         } else {
           cell.text = '';
           cell.visible = false;
           cell.color = fillMatrix[i][j] ? 'var(--filler-color)' : 'var(--bg-color)';
+          cell.inputVisible = false;
         }
         row.push(cell);
       }
@@ -123,7 +131,7 @@ const Eliminazione = ({admin, socket}) => {
                   >
                     <div className='cell-visible-organization'>
                       {cell.text}
-                      {cell.visible && cell.coords.fase != 5 && cell.text && cell.text != '---' && cell.text != '?' &&
+                      {cell.inputVisible &&
                       <input className='input-eliminazione-score'
                         style={{backgroundColor: cell.color}}
                         placeholder={cell.score ?? 0}

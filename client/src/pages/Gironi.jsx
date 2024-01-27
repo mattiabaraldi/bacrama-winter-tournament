@@ -126,6 +126,8 @@ const updateGirone = (socket, iGirone, iDuello, puntiBacchiatore, puntiSfidante,
     return null;
   }
 
+  console.log(puntiBacchiatore, puntiSfidante)
+
   if((puntiBacchiatore > 10 || puntiSfidante > 10) && Math.abs(puntiBacchiatore - puntiSfidante) > 2) {
     alert('La differenza ai vantaggi non può essere maggiore di due');
     return null;

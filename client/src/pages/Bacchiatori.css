@@ -1,11 +1,19 @@
 .bacchiatori-container {
   display: flex;
   flex-direction: column;
-  border: 1px solid black;
   padding: 1em 0;
 }
 
 .bacchiatore-riga {
   display: flex;
   justify-content: center;
+}
+
+.classifica-riga {
+  display: flex;
+  justify-content: space-between;
+}
+
+.classifica-riga > p {
+  margin: 0 0.2em;
 }
