@@ -130,12 +130,14 @@ io.on('connection', (socket) => {
   });
   socket.on('calcGironi', () => {
     calcGironi();
+    io.emit('serveGironi', calculatedGironi);
   });
   socket.on('getGironi', () => {
     socket.emit('serveGironi', calculatedGironi);
   });
   socket.on('calcEliminatorie', data => {
     calcEliminatorie(data);
+    io.emit('serveEliminatorie', calculatedEliminatorie);
   });
   socket.on('getEliminatorie', () => {
     socket.emit('serveEliminatorie', calculatedEliminatorie);
