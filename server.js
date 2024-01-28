@@ -154,10 +154,10 @@ io.on('connection', (socket) => {
     calculatedGironi[data.girone][data.duello].winner = '';
 
     if(!isNaN(data.uguale) && !isNaN(data.opposto) && data.uguale != null && data.opposto != null) {
-      if((data.uguale >= 10 || data.opposto >= 10) && data.uguale != data.opposto) {
+      //if((data.uguale >= 10 || data.opposto >= 10) && data.uguale != data.opposto) {
         const winner = data.uguale*1 > data.opposto*1 ? 'uguale' : 'opposto';
         calculatedGironi[data.girone][data.duello].winner = winner;
-      }
+      //}
     }
     
     io.emit('serveGironi', calculatedGironi);
