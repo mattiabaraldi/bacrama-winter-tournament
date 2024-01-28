@@ -133,6 +133,11 @@ const updateGirone = (socket, iGirone, iDuello, puntiBacchiatore, puntiSfidante,
     return null;
   }*/
 
+  if((puntiBacchiatore > 10 || puntiSfidante > 10)) {
+    alert('Il punteggio massimo è 10');
+    return null;
+  }
+
   socket.emit('setPunteggi', {
     girone: iGirone,
     duello: iDuello,
