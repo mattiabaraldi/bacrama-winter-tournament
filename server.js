@@ -17,6 +17,11 @@ const bacchiatori = JSON.parse(readFileSync('./bacchiatori.json'));
 const calculatedGironi = JSON.parse(readFileSync('./gironi.json'));
 const calculatedEliminatorie = JSON.parse(readFileSync('./eliminatorie.json'));
 const datiGironi = {
+  3: [3],
+  4: [4],
+  5: [5],
+  6: [6],
+  7: [4, 3],
   8: [4, 4],
   9: [5, 4],
   10: [5, 5],
@@ -45,6 +50,11 @@ const datiGironi = {
 }
 
 const ordineDuelli = {
+  3: [
+    [1, 2],
+    [2, 3],
+    [1, 3]
+  ],
   4: [
     [1, 4],
     [2, 3],
@@ -84,7 +94,7 @@ const ordineDuelli = {
   ]
 }
 
-const numeroDuelliPerPersona = {15: 6, 10: 5, 6: 4};
+const numeroDuelliPerPersona = {15: 6, 10: 5, 6: 4, 3: 3};
 
 const ordineEliminatorie = [
   1, 31, 4, 27,  8, 23, 12, 19, 17, 14, 21, 10, 25,  6, 29,  2, 
