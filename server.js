@@ -404,7 +404,37 @@ function calcClassificaEliminatorie() {
     for(let j = 0; j < currentGirone.length; j += 2) {
       const b1 = currentGirone[j];
       const b2 = currentGirone[j + 1];
-      if(!b1.name || !b2.name) continue;
+      //if(!b1.name || !b2.name) continue;
+      if(b1.name && !b2.name) {
+        if(!(b1.name in result)) {
+          result[b1.name] = {
+            name: b1.name,
+            wins: 1,
+            duelli: 0,
+            fatti: 0,
+            ricevuti: 0
+          };
+        }
+      } else {
+        result[b1.name].wins++;
+        result.duelli += 1;
+        result.fatti += 10;
+      }
+      if(b2.name && !b1.name) {
+        if(!(b2.name in result)) {
+          result[b2.name] = {
+            name: b2.name,
+            wins: 1,
+            duelli: 0,
+            fatti: 0,
+            ricevuti: 0
+          };
+        }
+      } else {
+        result[b2.name].wins++;
+        result.duelli += 1;
+        result.fatti += 10;
+      }
       if(!(b1.name in result)) result[b1.name] = {
         name: b1.name,
         wins: 0,
