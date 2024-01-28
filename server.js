@@ -410,8 +410,8 @@ function calcClassificaEliminatorie() {
           result[b1.name] = {
             name: b1.name,
             wins: 1,
-            duelli: 0,
-            fatti: 0,
+            duelli: 1,
+            fatti: 10,
             ricevuti: 0
           };
         }
@@ -425,8 +425,8 @@ function calcClassificaEliminatorie() {
           result[b2.name] = {
             name: b2.name,
             wins: 1,
-            duelli: 0,
-            fatti: 0,
+            duelli: 1,
+            fatti: 10,
             ricevuti: 0
           };
         }
