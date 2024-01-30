@@ -370,10 +370,10 @@ function calcClassificaGironi() {
     }
   }
   const arrayResult = Object.entries(result).map(([key, item]) => {
-    return {name: key, wins: `${Math.trunc(item.wins)}%`, score: item.score};
+    return {name: key, numWins: item.wins, wins: `${Math.trunc(item.wins)}%`, score: item.score};
   });
   arrayResult.sort((a, b) => {
-    if(a.wins != b.wins) return b.wins - a.wins;
+    if(a.numWins != b.numWins) return b.numWins - a.numWins;
     if(a.score != b.score) return b.score - a.score;
   });
   return arrayResult;
