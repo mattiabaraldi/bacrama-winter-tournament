@@ -279,8 +279,6 @@ function calcEliminatorie(data) {
     if(a.score != b.score) return b.score - a.score;
   });
 
-  console.log(arrayPunteggi);
-
   calculatedEliminatorie.splice(0, calculatedEliminatorie.length);
   calculatedEliminatorie.push([], [], [], [], [], []);
 
