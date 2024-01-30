@@ -94,12 +94,17 @@ const ordineDuelli = {
   ]
 }
 
-const numeroDuelliPerPersona = {15: 6, 10: 5, 6: 4, 3: 3};
+const numeroDuelliPerPersona = {15: 5, 10: 4, 6: 3, 3: 2};
 
-const ordineEliminatorie = [
+const bo = [
   1, 31, 4, 27,  8, 23, 12, 19, 17, 14, 21, 10, 25,  6, 29,  2, 
   3, 28, 7,  5, 11, 20, 15, 16, 18, 13, 22,  9, 26, 24, 30,  0
 ];
+
+const ordineEliminatorie = [
+  1, 30,  9, 22,  5, 26, 13, 18, 16, 15, 20, 11, 24,  7, 28,  3, 
+  2, 29,  6, 25, 10, 21, 14, 17, 19, 12, 27,  4, 23,  8, 31,  0
+]
 
 setInterval(() => {
   writeFile('./bacchiatori.json', JSON.stringify(bacchiatori), err => {
@@ -259,22 +264,22 @@ function calcEliminatorie(data) {
         loserName = duello.nomeUguale;
         loserScore = duello.puntiUguale;
       }
-      if(!(winnerName in punteggi)) punteggi[winnerName] = 0;
-      if(!(loserName in punteggi)) punteggi[loserName] = 0;
-      if(winnerScore > 8 && loserScore > 8) {
-        punteggi[winnerName] += 1 / numeroDuelliPerPersona[girone.length];
-      } else {
-        punteggi[winnerName] += (winnerScore - loserScore) / numeroDuelliPerPersona[girone.length];
-      }
-      punteggi[loserName] += 0;
+      if(!(winnerName in punteggi)) punteggi[winnerName] = {wins: 0, score: 0};
+      if(!(loserName in punteggi)) punteggi[loserName] = {wins: 0, score: 0};
+      const numDuelli = numeroDuelliPerPersona[girone.length];
+      punteggi[winnerName].wins += 1 / numDuelli;
+      punteggi[winnerName].score += winnerScore > 8 && loserScore > 8 ? 1 : (winnerScore - loserScore) / numDuelli;
     }
   }
-  const arrayPunteggi = Object.entries(punteggi)
-  .reduce((accum, record) => {
-    accum.push({name: record[0], scoreClassifica: record[1]});
-    return accum;
-  }, []);
-  arrayPunteggi.sort((a, b) => b.scoreClassifica - a.scoreClassifica);
+  const arrayPunteggi = Object.entries(punteggi).map(([key, item]) => {
+    return {name: key, ...item}
+  }); 
+  arrayPunteggi.sort((a, b) => {
+    if(a.wins != b.wins) return b.wins - a.wins;
+    if(a.score != b.score) return b.score - a.score;
+  });
+
+  console.log(arrayPunteggi);
 
   calculatedEliminatorie.splice(0, calculatedEliminatorie.length);
   calculatedEliminatorie.push([], [], [], [], [], []);
@@ -353,28 +358,25 @@ function calcClassificaGironi() {
   const result = {};
 
   for(const girone of Object.values(calculatedGironi)) {
-    const dimensioneGirone = numeroDuelliPerPersona[girone.length];
+    const numDuelli = numeroDuelliPerPersona[girone.length];
     for (const duello of girone) {
-      if(!(duello.nomeUguale in result)) result[duello.nomeUguale] = {wins: 0, fatti: 0, ricevuti: 0};
-      if(!(duello.nomeOpposto in result)) result[duello.nomeOpposto] = {wins: 0, fatti: 0, ricevuti: 0};
+      if(!(duello.nomeUguale in result)) result[duello.nomeUguale] = {wins: 0, score: 0};
+      if(!(duello.nomeOpposto in result)) result[duello.nomeOpposto] = {wins: 0, score: 0};
       if(duello.winner == 'uguale') {
-        result[duello.nomeUguale].wins++;
+        result[duello.nomeUguale].wins += 1 / numDuelli;
+        result[duello.nomeUguale].score += duello.puntiUguale > 8 && duello.puntiOpposto > 8 ? 1 : (duello.puntiUguale - duello.puntiOpposto) / numDuelli;
       } else if(duello.winner == 'opposto') {
-        result[duello.nomeOpposto].wins++;
+        result[duello.nomeOpposto].wins += 1 / numDuelli;
+        result[duello.nomeOpposto].score += duello.puntiOpposto > 8 && duello.puntiUguale > 8 ? 1 : (duello.puntiOpposto - duello.puntiUguale) / numDuelli;
       }
-      result[duello.nomeUguale].fatti += duello.puntiUguale / dimensioneGirone;
-      result[duello.nomeUguale].ricevuti += duello.puntiOpposto / dimensioneGirone;
-      result[duello.nomeOpposto].fatti += duello.puntiOpposto / dimensioneGirone;
-      result[duello.nomeOpposto].ricevuti += duello.puntiUguale / dimensioneGirone;
     }
   }
   const arrayResult = Object.entries(result).map(([key, item]) => {
     return {name: key, ...item};
   });
   arrayResult.sort((a, b) => {
-    if(b.wins - a.wins != 0) return b.wins - a.wins;
-    if(b.fatti - a.fatti != 0) return b.fatti - a.fatti;
-    if(a.ricevuti - b.ricevuti != 0) return a.ricevuti - b.ricevuti;
+    if(a.wins != b.wins) return b.wins - a.wins;
+    if(a.score != b.score) return b.score - a.score;
   });
   return arrayResult;
 }
@@ -404,70 +406,50 @@ function calcClassificaEliminatorie() {
     for(let j = 0; j < currentGirone.length; j += 2) {
       const b1 = currentGirone[j];
       const b2 = currentGirone[j + 1];
-      //if(!b1.name || !b2.name) continue;
-      if(b1.name && !b2.name) {
-        if(!(b1.name in result)) {
-          result[b1.name] = {
-            name: b1.name,
-            wins: 1,
-            duelli: 1,
-            fatti: 10,
-            ricevuti: 0
-          };
+
+      if(b1.name) {
+        if(!(b1.name in result)) result[b1.name] = {
+          name: b1.name,
+          wins: 0,
+          duelli: 0,
+          score: 0
+        };
+        if(!b2.name) {
+          result[b1.name].wins++;
+        } else {
+          result[b1.name].duelli++;
+          if(b1.score > b2.score) {
+            result[b1.name].wins++; 
+            result[b1.name].score += b1.score > 8 && b2.score > 8 ? 1 : b1.score - b2.score;
+          } 
         }
-      } else {
-        result[b1.name].wins++;
-        result.duelli += 1;
-        result.fatti += 10;
       }
-      if(b2.name && !b1.name) {
-        if(!(b2.name in result)) {
-          result[b2.name] = {
-            name: b2.name,
-            wins: 1,
-            duelli: 1,
-            fatti: 10,
-            ricevuti: 0
-          };
+
+      if(b2.name) {
+        if(!(b2.name in result)) result[b2.name] = {
+          name: b2.name,
+          wins: 0,
+          duelli: 0,
+          score: 0
+        };
+        if(!b1.name) {
+          result[b2.name].wins++;
+        } else {
+          result[b2.name].duelli++;
+          if(b2.score > b1.score) {
+            result[b2.name].wins++; 
+            result[b2.name].score += b2.score > 8 && b1.score > 8 ? 1 : b2.score - b1.score;
+          } 
         }
-      } else {
-        result[b2.name].wins++;
-        result.duelli += 1;
-        result.fatti += 10;
       }
-      if(!(b1.name in result)) result[b1.name] = {
-        name: b1.name,
-        wins: 0,
-        duelli: 0,
-        fatti: 0,
-        ricevuti: 0
-      };
-      if(!(b2.name in result)) result[b2.name] = {
-        name: b2.name,
-        wins: 0,
-        duelli: 0,
-        fatti: 0,
-        ricevuti: 0
-      };
-      result[b1.name].duelli++;
-      result[b1.name].fatti += b1.score;
-      result[b1.name].ricevuti += b2.score;
-      result[b2.name].duelli++;
-      result[b2.name].fatti += b2.score;
-      result[b2.name].ricevuti += b1.score;
-      if(b1.score > b2.score) result[b1.name].wins++;
-      else result[b2.name].wins++;
     }
   }
+
   const arrayResult = Object.values(result);
-  arrayResult.forEach(el => {
-    el.fatti /= el.duelli;
-    el.ricevuti /= el.duelli;
-  });
+  arrayResult.forEach(el => el.score /= el.duelli);
   arrayResult.sort((a, b) => {
     if(b.wins - a.wins != 0) return b.wins - a.wins;
-    if(b.fatti - a.fatti != 0) return b.fatti - a.fatti;
-    if(a.ricevuti - b.ricevuti != 0) return a.ricevuti - b.ricevuti;
+    if(b.score - a.score != 0) return b.score - a.score;
   });
   return arrayResult;
 }
