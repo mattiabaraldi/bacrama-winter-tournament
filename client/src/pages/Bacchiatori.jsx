@@ -39,7 +39,7 @@ const Bacchiatori = ({socket, bacchiatori}) => {
                   <td>{index in podio ? `${podio[index]}` : `${index + 1}`}</td>
                   <td>{`${value.name}`}</td>
                   <td>{`${value.wins}`}</td>
-                  <td>{`${value.score}`}</td>
+                  <td>{`${value.score.toFixed(2)}`}</td>
                 </tr>
               )})
             }
