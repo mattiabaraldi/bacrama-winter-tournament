@@ -361,16 +361,16 @@ function calcClassificaGironi() {
       if(!(duello.nomeUguale in result)) result[duello.nomeUguale] = {wins: 0, score: 0};
       if(!(duello.nomeOpposto in result)) result[duello.nomeOpposto] = {wins: 0, score: 0};
       if(duello.winner == 'uguale') {
-        result[duello.nomeUguale].wins += 1 / numDuelli;
+        result[duello.nomeUguale].wins += 100 / numDuelli;
         result[duello.nomeUguale].score += duello.puntiUguale > 8 && duello.puntiOpposto > 8 ? 1 : (duello.puntiUguale - duello.puntiOpposto) / numDuelli;
       } else if(duello.winner == 'opposto') {
-        result[duello.nomeOpposto].wins += 1 / numDuelli;
+        result[duello.nomeOpposto].wins += 100 / numDuelli;
         result[duello.nomeOpposto].score += duello.puntiOpposto > 8 && duello.puntiUguale > 8 ? 1 : (duello.puntiOpposto - duello.puntiUguale) / numDuelli;
       }
     }
   }
   const arrayResult = Object.entries(result).map(([key, item]) => {
-    return {name: key, ...item};
+    return {name: key, wins: `${Math.trunc(item.wins)}%`, score: item.score};
   });
   arrayResult.sort((a, b) => {
     if(a.wins != b.wins) return b.wins - a.wins;

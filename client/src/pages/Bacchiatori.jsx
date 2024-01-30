@@ -29,7 +29,7 @@ const Bacchiatori = ({socket, bacchiatori}) => {
                 <tr>
                 <td></td>
                 <td>Bacchiatore</td>
-                <td>Wins (%)</td>
+                <td>Wins</td>
                 <td>Avg</td>
               </tr>
             </thead>
@@ -38,8 +38,8 @@ const Bacchiatori = ({socket, bacchiatori}) => {
                 <tr key={index} className='classifica-table-row'>
                   <td>{index in podio ? `${podio[index]}` : `${index + 1}`}</td>
                   <td>{`${value.name}`}</td>
-                  <td>{`${value.wins.toFixed(2)}`}</td>
-                  <td>{`${value.score.toFixed(2)}`}</td>
+                  <td>{`${value.wins}`}</td>
+                  <td>{`${value.score}`}</td>
                 </tr>
               )})
             }
