@@ -394,8 +394,7 @@ function calcClassificaEliminatorie() {
       name: calculatedEliminatorie[5][0].name,
       wins: 0,
       duelli: 0,
-      fatti: 0,
-      ricevuti: 0
+      score: 0
     }
   };
 
